@@ -218,17 +218,8 @@ pkg_setup() {
 }
 
 src_unpack() {
-	# Make and go to working dircetory
-#        mkdir ${S}
- #	cd ${S}
-
         # unpack the kernel sources
         unpack ${KERNEL} || die "failed to unpack kernel sources"
-
-##	cd ${WORKDIR}
-
-	# unpack the kernel sources
-#	unpack ${KERNEL} || die "failed to unpack kernel sources"
 
 	# unpack the kernel patches
         unpack ${DEB_PATCH} || die "failed to unpack debian patches"
@@ -248,21 +239,20 @@ src_prepare() {
 	debug-print-function ${FUNCNAME} "${@}"
 #        cd ${S}
 
-        # copy the debian patches into the kernel sources work directory (config-extract and graphene patches requires this).
-        cp -ra "${WORKDIR}"/debian "${S}"/debian 
-
-        # punt the debian devs certificates
-        rm -rf "${S}"/debian/certs
-
 	### PATCHES ###
 	cd ${WORKDIR}
-
+        dir
         # only apply these if USE=hardened as the patches will break proprietary userspace and some others.
         # apply hardening patches
         einfo "Applying graphene patches ..."
         for my_patch in ${GRAPHENE_PATCHES[*]}; do
             eapply_graphene "${my_patch}"
         done
+
+        # copy the debian patches into the kernel sources work directory (config-extract and graphene patches requires this).
+        #cp -ra "${WORKDIR}"/debian "${S}"/debian 
+
+        cd ${S}
 
         # copy the debian patches into the kernel sources work directory (config-extract requires this).
 #	cp -raf "${S}"/debian "${WORKDIR}"
@@ -275,7 +265,7 @@ src_prepare() {
 	# apply gentoo patches
 	einfo "Applying Gentoo Linux patches ..."
 	for my_patch in ${GENTOO_PATCHES[*]} ; do
-        eapply_gentoo "${my_patch}" > ${S}
+        eapply_gentoo "${my_patch}"
 	done
 
 	# optionally apply dtrace patches
@@ -294,6 +284,9 @@ src_prepare() {
 	sed	-i -e 's:#export\tINSTALL_PATH:export\tINSTALL_PATH:' Makefile || die "failed to fix-up INSTALL_PATH in kernel Makefile"
         # copy the debian patches into the kernel sources work directory (config-extract requires this).
         cp -a "${WORKDIR}"/debian "${S}"/debian
+
+        # punt the debian devs certificates
+        rm -rf "${S}"/debian/certs
 
 
 	### GENERATE CONFIG ###
