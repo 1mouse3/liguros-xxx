@@ -75,7 +75,7 @@ fi
 DEB_PV="${DEB_PV_BASE}${DEB_EXTRAVERSION}"
 KERNEL="linux_${DEB_PV_BASE}.orig.tar.xz"
 DEB_PATCH="linux_${DEB_PV}.debian.tar.xz"
-KERNEL_ARCHIVE="https://www.dropbox.com/scl/fi/5u4tt2yq5ihkb16nwdegy/linux_6.1.124.orig.tar.xz?rlkey=3tsnit2eztumgr54ksi0wkibe&st=gl3wkr19&raw=1 -> ${KERNEL}"
+KERNEL_ARCHIVE="https://www.dropbox.com/scl/fi/4llspk9xzmmcvwn9h00b2/linux_6.1.124.orig.tar.xz?rlkey=mkje9nitinqzx9tbmv9q5ggk9&st=a8g9mz06&raw=1 -> ${KERNEL}"
 DEB_PATCH_ARCHIVE="https://www.dropbox.com/scl/fi/bfuyprfhj7cq17dzbruqf/linux_6.1.124-1.debian.tar.xz?rlkey=44pi91kwxa6v8mpnj5i8rcw0n&st=mmnekdpy&raw=1 -> ${DEB_PATCH}"
 DEB_DSC_ARCHIVE="https://www.dropbox.com/scl/fi/t6ee945301xzlip1msbeo/linux_6.1.124-1.dsc?rlkey=0n9p6vw46xoya095zpwhztyy6&st=px0scfzu&raw=1 -> linux_${DEB_PV}.dsc"
 BUILD_PATCH="/var/git/liguros-xxx/sys-kernel/hardened-sources/patch-files/"
@@ -93,7 +93,7 @@ SRC_DIR="
 	${GENTOO_PATCH}
 "
 
-S="${WORKDIR}/linux_${DEB_PV_BASE}"
+S="${WORKDIR}/linux-${DEB_PV_BASE}"
 
 FILESDIR="/var/tmp/portage/sys-kernel/hardened-sources-6.1.124_p1-r1/files"
 
