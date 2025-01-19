@@ -95,7 +95,7 @@ SRC_DIR="
 
 S="${WORKDIR}/linux-${DEB_PV_BASE}"
 
-#FILESDIR="/var/tmp/portage/sys-kernel/debian-sources-6.1.27_p1-r1/files"
+FILESDIR="/var/tmp/portage/sys-kernel/hardened-sources-6.1.124_p1-r1/files"
 
 # TODO: manage HARDENED_PATCHES and GENTOO_PATCHES can be managed in a git repository and packed into tar balls per version.
 
@@ -167,15 +167,15 @@ DTRACE_PATCHES=(
 )
 
 eapply_graphene() {
-        eapply "${GRAPHENE_PATCHES_DIR}/${1}"
+        eapply "${GRAPHENE_PATCHES_DIR}${1}"
 }
 
 eapply_gentoo() {
-	eapply "${GENTOO_PATCHES_DIR}/${1}"
+	eapply "${GENTOO_PATCHES_DIR}${1}"
 }
 
 eapply_dtrace() {
-	eapply "${DTRACE_PATCHES_DIR}/${1}"
+	eapply "${DTRACE_PATCHES_DIR}${1}"
 }
 
 get_patch_list() {
@@ -217,9 +217,15 @@ pkg_setup() {
 }
 
 src_unpack() {
-	# unpack the kernel sources to ${WORKDIR}
+	# Make and go to working dircetory
         mkdir ${S}
+	cd ${WORKDIR}}
+
+	# unpack the kernel sources
 	unpack ${KERNEL} || die "failed to unpack kernel sources"
+
+	# unpack the kernel patches
+        unpack ${DEB_PATCH} || die "failed to unpack debian patches"
 
 	# Patches to graphene source
         mkdir ${SLOT}
@@ -230,11 +236,6 @@ src_unpack() {
 	# Cant figure out the right syntex to make this proper #
 #	cp -ar ${BUILD_PATCH}\${SLOT}\* ${SLOT} || die "failed to copy patches"
 	cp -ar /var/git/liguros-xxx/sys-kernel/hardened-sources/patch-files/6.1/* ${SLOT} || die "failed to copy patch"
-
-	# unpack the kernel patches
-        unpack ${DEB_PATCH} || die "failed to unpack debian patches"
-
-	cd ${WORKDIR}
 }
 
 src_prepare() {
@@ -244,9 +245,9 @@ src_prepare() {
 	rm -rf "${S}"/debian/certs
 
         # copy the debian patches into the kernel sources work directory (config-extract and graphene patches requires this).
-        cp -ra "${WORKDIR}"/debian "${S}"/debian
-
+#        cp -ra "${WORKDIR}"/debian "${S}"/debian
 	### PATCHES ###
+	cd ${WORKDIR}
 
         # only apply these if USE=hardened as the patches will break proprietary userspace and some others.
         # apply hardening patches
@@ -256,7 +257,7 @@ src_prepare() {
         done
 
         # copy the debian patches into the kernel sources work directory (config-extract requires this).
-	cp -raf "${S}"/debian "${WORKDIR}"
+#	cp -raf "${S}"/debian "${WORKDIR}"
 
 	# apply debian patches
 	for debpatch in $( get_patch_list "${WORKDIR}/debian/patches/series" ); do
