@@ -75,18 +75,14 @@ fi
 DEB_PV="${DEB_PV_BASE}${DEB_EXTRAVERSION}"
 KERNEL="linux_${DEB_PV_BASE}.orig.tar.xz"
 DEB_PATCH="linux_${DEB_PV}.debian.tar.xz"
-#ANTHRAXX_UPSTREAM="https://github.com/anthraxx/linux-hardened.git"
 KERNEL_ARCHIVE="https://www.dropbox.com/scl/fi/f6ym1rsitl6phh09t3iy3/linux_6.1.124.orig.tar.xz?rlkey=echqnq0ww1u0mne2onlaqmugj&st=9d153s6c&raw=1 -> ${KERNEL}"
 DEB_PATCH_ARCHIVE="https://www.dropbox.com/scl/fi/bfuyprfhj7cq17dzbruqf/linux_6.1.124-1.debian.tar.xz?rlkey=44pi91kwxa6v8mpnj5i8rcw0n&st=mmnekdpy&raw=1 -> ${DEB_PATCH}"
 DEB_DSC_ARCHIVE="https://www.dropbox.com/scl/fi/tkgb79i6fypk0s0yrncas/linux_6.1.124-1.dsc?rlkey=31iz04sxleomilb03lxnue0j0&st=enxi4jji&raw=1 -> linux_${DEB_PV}.dsc"
-#LIG_UPSTREAM="https://dev.gentoo.org/~mpagano/genpatches/tarballs"
-#GRAPHENE_PATCH="/var/git/liguros-xxx/sys-kernel/hardened-sources/patches/graphene"
 BUILD_PATCH="/var/git/liguros-xxx/sys-kernel/hardened-sources/patch-files/"
 
 DISTDIR=/var/cache/portage/distfiles/
 
 SRC_URI="
-	#$DEB_UPSTREAM/${KERNEL_ARCHIVE}
         ${KERNEL_ARCHIVE}
         ${DEB_PATCH_ARCHIVE}
         ${DEB_DSC_ARCHIVE}
@@ -223,10 +219,6 @@ pkg_setup() {
 src_unpack() {
 	# unpack the kernel sources to ${WORKDIR}
         mkdir ${S}
-#	git clone --branch ${SLOT} --single-branch ${ANTHRAXX_UPSTREAM} ${WORKDIR} || die "failed to unpack kernel sources"
-	#cp -rf /var/git/liguros-xxx/sys-kernel/debian-sources/source/* ${S} || die "failed to unpack kernel sources"
-	#cp -rf /var/git/liguros-xxx/sys-kernel/debian-sources/source/{.clang-format,.get_maintainer.ignore,.gitignore,.rustfmt.toml,.cocciconfig,.gitattributes,.mailmap,.git} ${S} || die "failed to unpack kernel sources"
-#        cp ${DISTDIR}\${KERNEL} ${WORKDIR}
 	unpack ${KERNEL} || die "failed to unpack kernel sources"
 
 	# Patches to graphene source
@@ -234,19 +226,14 @@ src_unpack() {
         mkdir ${GENTOO_PATCHES_DIR}
         mkdir ${GRAPHENE_PATCHES_DIR}
         mkdir ${DTRACE_PATCHES_DIR}
-#	cp -ar ${BUILD_PATCH}\${SLOT}\* ${SLOT} || die "failed to copy patches"
-	cp -ar /var/git/liguros-xxx/sys-kernel/hardened-sources/patch-files/6.1/* ${SLOT} || die "failed to copy patches"
 
-#	mkdir ${GRAPHENE_PATCHES_DIR}
-#	cp ${GRAPHENE_PATCH}/* ${GRAPHENE_PATCHES_DIR} || die "failed to unpack graphene patches"
+	# Cant figure out the right syntex to make this proper #
+#	cp -ar ${BUILD_PATCH}\${SLOT}\* ${SLOT} || die "failed to copy patches"
+	cp -ar /var/git/liguros-xxx/sys-kernel/hardened-sources/patch-files/6.1/* ${SLOT} || die "failed to copy patch"
 
 	# unpack the kernel patches
-#	cp ${DISTDIR}\${DEB_PATCH} ${WORKDIR}
         unpack ${DEB_PATCH} || die "failed to unpack debian patches"
-#	mkdir ${GENTOO_PATCHES_DIR}
-#        mkdir ${HARDENED_PATCHES_DIR}
-#	mkdir ${GENTOO_PATCHES_DIR}
-#	cp -ar /var/git/liguros-xxx/sys-kernel/hardened-sources/patche-files/6.1/* ${SLOT} || die "failed to unpack gentoo patches"
+
 	cd ${WORKDIR}
 }
 
@@ -269,7 +256,6 @@ src_prepare() {
         done
 
         # copy the debian patches into the kernel sources work directory (config-extract requires this).
-#        rm -r "${WORKDIR}"/debian/*
 	cp -raf "${S}"/debian "${WORKDIR}"
 
 	# apply debian patches
