@@ -75,9 +75,9 @@ fi
 DEB_PV="${DEB_PV_BASE}${DEB_EXTRAVERSION}"
 KERNEL="linux_${DEB_PV_BASE}.orig.tar.xz"
 DEB_PATCH="linux_${DEB_PV}.debian.tar.xz"
-KERNEL_ARCHIVE="https://www.dropbox.com/scl/fi/f6ym1rsitl6phh09t3iy3/linux_6.1.124.orig.tar.xz?rlkey=echqnq0ww1u0mne2onlaqmugj&st=9d153s6c&raw=1 -> ${KERNEL}"
+KERNEL_ARCHIVE="https://www.dropbox.com/scl/fi/5u4tt2yq5ihkb16nwdegy/linux_6.1.124.orig.tar.xz?rlkey=3tsnit2eztumgr54ksi0wkibe&st=gl3wkr19&raw=1 -> ${KERNEL}"
 DEB_PATCH_ARCHIVE="https://www.dropbox.com/scl/fi/bfuyprfhj7cq17dzbruqf/linux_6.1.124-1.debian.tar.xz?rlkey=44pi91kwxa6v8mpnj5i8rcw0n&st=mmnekdpy&raw=1 -> ${DEB_PATCH}"
-DEB_DSC_ARCHIVE="https://www.dropbox.com/scl/fi/tkgb79i6fypk0s0yrncas/linux_6.1.124-1.dsc?rlkey=31iz04sxleomilb03lxnue0j0&st=enxi4jji&raw=1 -> linux_${DEB_PV}.dsc"
+DEB_DSC_ARCHIVE="https://www.dropbox.com/scl/fi/t6ee945301xzlip1msbeo/linux_6.1.124-1.dsc?rlkey=0n9p6vw46xoya095zpwhztyy6&st=px0scfzu&raw=1 -> linux_${DEB_PV}.dsc"
 BUILD_PATCH="/var/git/liguros-xxx/sys-kernel/hardened-sources/patch-files/"
 
 DISTDIR=/var/cache/portage/distfiles/
@@ -93,7 +93,7 @@ SRC_DIR="
 	${GENTOO_PATCH}
 "
 
-S="${WORKDIR}/linux-${DEB_PV_BASE}"
+S="${WORKDIR}/linux_${DEB_PV_BASE}"
 
 FILESDIR="/var/tmp/portage/sys-kernel/hardened-sources-6.1.124_p1-r1/files"
 
@@ -146,6 +146,7 @@ GENTOO_PATCHES=(
     5000_shiftfs-6.1.patch
     5010_enable-cpu-optimizations-universal.patch
 )
+
 
 DTRACE_PATCHES_DIR="${WORKDIR}/${SLOT}/dtrace-patches"
 
@@ -218,11 +219,16 @@ pkg_setup() {
 
 src_unpack() {
 	# Make and go to working dircetory
-        mkdir ${S}
-	cd ${WORKDIR}
+#        mkdir ${S}
+ #	cd ${S}
+
+        # unpack the kernel sources
+        unpack ${KERNEL} || die "failed to unpack kernel sources"
+
+##	cd ${WORKDIR}
 
 	# unpack the kernel sources
-	unpack ${KERNEL} || die "failed to unpack kernel sources"
+#	unpack ${KERNEL} || die "failed to unpack kernel sources"
 
 	# unpack the kernel patches
         unpack ${DEB_PATCH} || die "failed to unpack debian patches"
@@ -240,12 +246,14 @@ src_unpack() {
 
 src_prepare() {
 	debug-print-function ${FUNCNAME} "${@}"
-
-	# punt the debian devs certificates
-	rm -rf "${S}"/debian/certs
+#        cd ${S}
 
         # copy the debian patches into the kernel sources work directory (config-extract and graphene patches requires this).
-#        cp -ra "${WORKDIR}"/debian "${S}"/debian
+        cp -ra "${WORKDIR}"/debian "${S}"/debian 
+
+        # punt the debian devs certificates
+        rm -rf "${S}"/debian/certs
+
 	### PATCHES ###
 	cd ${WORKDIR}
 
@@ -267,7 +275,7 @@ src_prepare() {
 	# apply gentoo patches
 	einfo "Applying Gentoo Linux patches ..."
 	for my_patch in ${GENTOO_PATCHES[*]} ; do
-        eapply_gentoo "${my_patch}"
+        eapply_gentoo "${my_patch}" > ${S}
 	done
 
 	# optionally apply dtrace patches
@@ -277,11 +285,16 @@ src_prepare() {
         done
     fi
 
+#	cd ${S}
+
 	# append EXTRAVERSION to the kernel sources Makefile
 	sed -i -e "s:^\(EXTRAVERSION =\).*:\1 ${MODULE_EXT}:" Makefile || die "failed to append EXTRAVERSION to kernel Makefile"
 
 	# todo: look at this, haven't seen it used in many cases.
 	sed	-i -e 's:#export\tINSTALL_PATH:export\tINSTALL_PATH:' Makefile || die "failed to fix-up INSTALL_PATH in kernel Makefile"
+        # copy the debian patches into the kernel sources work directory (config-extract requires this).
+        cp -a "${WORKDIR}"/debian "${S}"/debian
+
 
 	### GENERATE CONFIG ###
 
