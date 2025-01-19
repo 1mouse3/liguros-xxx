@@ -1,5 +1,5 @@
---- a/linux_6.1.124/drivers/net/wireless/mediatek/mt76/mac80211.c	2025-01-14 07:21:38.223397384 -0000
-+++ b/linux_6.1.124/drivers/net/wireless/mediatek/mt76/mac80211.c	2025-01-14 22:27:11.640317226 -0000
+--- a/linux-6.1.124/drivers/net/wireless/mediatek/mt76/mac80211.c	2025-01-14 07:21:38.223397384 -0000
++++ b/linux-6.1.124/drivers/net/wireless/mediatek/mt76/mac80211.c	2025-01-14 22:27:11.640317226 -0000
 @@ -35,7 +35,7 @@ static const struct ieee80211_channel mt
  	CHAN2G(5, 2432),
  	CHAN2G(6, 2437),
