@@ -1,0 +1,28 @@
+diff -urN Python-3.10.14.orig/Modules/_ssl.c Python-3.10.14/Modules/_ssl.c
+--- Python-3.10.14.orig/Modules/_ssl.c	2024-03-21 19:04:50.129880414 +0100
++++ Python-3.10.14/Modules/_ssl.c	2024-03-21 19:48:07.073067455 +0100
+@@ -4519,7 +4519,7 @@
+     return 0;
+ }
+ 
+-#if OPENSSL_VERSION_NUMBER < 0x30300000L
++#if OPENSSL_VERSION_NUMBER < 0x30300000L && !defined(LIBRESSL_VERSION_NUMBER)
+ static X509_OBJECT *x509_object_dup(const X509_OBJECT *obj)
+ {
+     int ok;
+@@ -4548,6 +4548,7 @@
+     }
+     return ret;
+ }
++#endif
+ 
+ static STACK_OF(X509_OBJECT) *
+ X509_STORE_get1_objects(X509_STORE *store)
+@@ -4561,7 +4562,6 @@
+     X509_STORE_unlock(store);
+     return ret;
+ }
+-#endif
+ 
+ PyDoc_STRVAR(PySSLContext_sni_callback_doc,
+ "Set a callback that will be called when a server name is provided by the SSL/TLS client in the SNI extension.\n\

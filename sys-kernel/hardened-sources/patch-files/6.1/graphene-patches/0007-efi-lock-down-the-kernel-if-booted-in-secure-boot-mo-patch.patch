@@ -1,0 +1,31 @@
+--- a/debian/patches/features/all/lockdown/efi-lock-down-the-kernel-if-booted-in-secure-boot-mo.patch	2025-01-14 16:24:03.540215777 -0000
++++ b/debain/patches/features/all/lockdown/efi-lock-down-the-kernel-if-booted-in-secure-boot-mo.patch	2025-01-14 17:12:55.646895812 -0000
+@@ -24,28 +24,6 @@ Signed-off-by: Salvatore Bonaccorso <car
+  security/lockdown/lockdown.c      |    2 +-
+  5 files changed, 27 insertions(+), 3 deletions(-)
+ 
+-Index: debian-kernel/arch/x86/kernel/setup.c
+-===================================================================
+---- debian-kernel.orig/arch/x86/kernel/setup.c
+-+++ debian-kernel/arch/x86/kernel/setup.c
+-@@ -979,6 +979,8 @@ void __init setup_arch(char **cmdline_p)
+- 	if (efi_enabled(EFI_BOOT))
+- 		efi_init();
+- 
+-+	efi_set_secure_boot(boot_params.secure_boot);
+-+
+- 	dmi_setup();
+- 
+- 	/*
+-@@ -1130,8 +1132,6 @@ void __init setup_arch(char **cmdline_p)
+- 	/* Allocate bigger log buffer */
+- 	setup_log_buf(1);
+- 
+--	efi_set_secure_boot(boot_params.secure_boot);
+--
+- 	reserve_initrd();
+- 
+- 	acpi_table_upgrade();
+ Index: debian-kernel/drivers/firmware/efi/secureboot.c
+ ===================================================================
+ --- debian-kernel.orig/drivers/firmware/efi/secureboot.c

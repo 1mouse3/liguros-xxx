@@ -1,0 +1,13 @@
+--- a/drivers/base/firmware_loader/main.c	2021-08-25 12:48:18.443728827 -0400
++++ b/drivers/base/firmware_loader/main.c	2021-08-25 12:53:28.296489959 -0400
+@@ -581,6 +581,10 @@ _request_firmware(const struct firmware
+ 		goto out;
+ 	}
+ 
++#ifdef CONFIG_GENTOO_PRINT_FIRMWARE_INFO
++        printk(KERN_NOTICE "Loading firmware: %s\n", name);
++#endif
++
+ 	ret = _request_firmware_prepare(&fw, name, device, buf, size,
+ 					opt_flags);
+ 	if (ret <= 0) /* error or already assigned */

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://liguros.gitlab.io/dtd/metadata.dtd">
+<pkgmetadata>
+ <maintainer type="PATCHED">
+  <email>1mouse3@gmail.com</email>
+  <name>ligurso-xxx</name>
+ </maintainer>
+ <maintainer type="project">
+  <email>dev@liguros.net</email>
+  <name>Development</name>
+ </maintainer>
+ <upstream>
+  <remote-id type="cpe">cpe:/a:openrc_project:openrc</remote-id>
+ </upstream>
+ <use>
+  <flag name="bluetooth">Build Bluetooth protocol support in socket module</flag>
+  <flag name="ensurepip">Install the ensurepip module that uses bundled wheels to bootstrap pip and setuptools (if disabled, it will be only possible to use venv `--without-pip`)</flag>
+  <flag name="libedit">Link readline extension against <pkg>dev-libs/libedit</pkg> instead of <pkg>sys-libs/readline</pkg></flag>
+  <flag name="pgo">Optimize the build using Profile Guided Optimization (PGO)</flag>
+  <flag name="lto">Optimize the build using Link Time Optimization (LTO)</flag>
+  <flag name="valgrind">Disable pymalloc when running under <pkg>dev-debug/valgrind</pkg> is detected (may incur minor performance penalty even when valgrind is not used)</flag>
+  <flag name="wininst">Install Windows executables required to create an executable installer for MS Windows</flag>
+ </use>
+ <origin>ports</origin>
+</pkgmetadata>

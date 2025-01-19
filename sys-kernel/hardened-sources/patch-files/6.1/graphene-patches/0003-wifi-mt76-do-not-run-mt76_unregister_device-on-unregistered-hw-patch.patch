@@ -1,0 +1,70 @@
+--- a/debian/patches/bugfix/all/wifi-mt76-do-not-run-mt76_unregister_device-on-unregistered-hw.patch	2025-01-14 18:21:07.163581389 -0000
++++ b/debian/patches/bugfix/all/wifi-mt76-do-not-run-mt76_unregister_device-on-unregistered-hw.patch	2025-01-14 22:32:56.213652199 -0000
+@@ -24,55 +24,16 @@ advance to prevent users from getting st
+ Signed-off-by: Cyril Brulebois <kibi@debian.org>
+ 
+ ---
+- drivers/net/wireless/mediatek/mt76/mac80211.c | 8 ++++++++
+- drivers/net/wireless/mediatek/mt76/mt76.h     | 1 +
+- 2 files changed, 9 insertions(+)
+ 
+---- a/drivers/net/wireless/mediatek/mt76/mac80211.c
+-+++ b/drivers/net/wireless/mediatek/mt76/mac80211.c
+-@@ -522,6 +522,7 @@ int mt76_register_phy(struct mt76_phy *p
+- 	if (ret)
+- 		return ret;
+- 
+-+	set_bit(MT76_STATE_REGISTERED, &phy->state);
+- 	phy->dev->phys[phy->band_idx] = phy;
+- 
+- 	return 0;
+-@@ -532,6 +533,9 @@ void mt76_unregister_phy(struct mt76_phy
+- {
+- 	struct mt76_dev *dev = phy->dev;
+- 
+-+	if (!test_bit(MT76_STATE_REGISTERED, &phy->state))
+-+		return;
+-+
+- 	mt76_tx_status_check(dev, true);
+- 	ieee80211_unregister_hw(phy->hw);
+- 	dev->phys[phy->band_idx] = NULL;
+-@@ -654,6 +658,7 @@ int mt76_register_device(struct mt76_dev
+- 		return ret;
+- 
+- 	WARN_ON(mt76_worker_setup(hw, &dev->tx_worker, NULL, "tx"));
+-+	set_bit(MT76_STATE_REGISTERED, &phy->state);
+- 	sched_set_fifo_low(dev->tx_worker.task);
+- 
+- 	return 0;
+-@@ -664,6 +669,9 @@ void mt76_unregister_device(struct mt76_
+- {
+- 	struct ieee80211_hw *hw = dev->hw;
+- 
+-+	if (!test_bit(MT76_STATE_REGISTERED, &dev->phy.state))
+-+		return;
+-+
+- 	if (IS_ENABLED(CONFIG_MT76_LEDS))
+- 		mt76_led_cleanup(dev);
+- 	mt76_tx_status_check(dev, true);
+---- a/drivers/net/wireless/mediatek/mt76/mt76.h
+-+++ b/drivers/net/wireless/mediatek/mt76/mt76.h
+-@@ -388,6 +388,7 @@ struct mt76_tx_cb {
+- 
+- enum {
+- 	MT76_STATE_INITIALIZED,
+-+	MT76_STATE_REGISTERED,
+- 	MT76_STATE_RUNNING,
+- 	MT76_STATE_MCU_RUNNING,
+- 	MT76_SCANNING,
++--- a/drivers/net/wireless/mediatek/mt76/mac80211.c      2025-01-14 07:21:38.223397384 -0000
+++++ b/drivers/net/wireless/mediatek/mt76/mac80211.c      2025-01-14 22:04:46.046977560 -0000
++@@ -35,7 +35,7 @@ static const struct ieee80211_channel mt
++ 	CHAN2G(5, 2432),
++ 	CHAN2G(6, 2437),
++ 	CHAN2G(7, 2442),
++-		CHAN2G(8, 2447),
+++	CHAN2G(8, 2447),
++ 	CHAN2G(9, 2452),
++ 	CHAN2G(10, 2457),
++ 	CHAN2G(11, 2462),
++--

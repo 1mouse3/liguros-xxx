@@ -1,0 +1,17 @@
+--- a/fs/namei.c	2022-01-09 17:55:34.000000000 -0500
++++ b/fs/namei.c	2022-02-26 11:32:31.832844465 -0500
+@@ -1020,10 +1020,10 @@ static inline void put_link(struct namei
+ 		path_put(&last->link);
+ }
+ 
+-int sysctl_protected_symlinks __read_mostly = 0;
+-int sysctl_protected_hardlinks __read_mostly = 0;
+-int sysctl_protected_fifos __read_mostly;
+-int sysctl_protected_regular __read_mostly;
++int sysctl_protected_symlinks __read_mostly = 1;
++int sysctl_protected_hardlinks __read_mostly = 1;
++int sysctl_protected_fifos __read_mostly = 1;
++int sysctl_protected_regular __read_mostly = 1;
+ 
+ /**
+  * may_follow_link - Check symlink following for unsafe situations

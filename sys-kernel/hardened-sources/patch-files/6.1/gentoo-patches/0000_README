@@ -1,0 +1,564 @@
+README
+--------------------------------------------------------------------------
+This patchset is to be the series of patches for gentoo-sources.
+It is designed for cross-compatibility, fixes and stability, with performance
+and additional features/driver support being a second.
+
+Unless otherwise stated and marked as such, this kernel should be suitable for
+all environments.
+
+
+Patchset Numbering Scheme
+--------------------------------------------------------------------------
+
+FIXES
+1000-1400	linux-stable
+1400-1500	linux-stable queue
+1500-1700	security
+1700-1800	architecture-related
+1800-1900	mm/scheduling/misc
+1900-2000	filesystems
+2000-2100	networking core
+2100-2200	storage core
+2200-2300	power management (ACPI, APM)
+2300-2400	bus (USB, IEEE1394, PCI, PCMCIA, ...)
+2400-2500	network drivers
+2500-2600	storage drivers
+2600-2700	input
+2700-2900	media (graphics, sound, tv)
+2900-3000	other
+3000-4000	reserved
+
+FEATURES
+4000-4100	network
+4100-4200	storage
+4200-4300	graphics
+4300-4400	filesystem
+4400-4500   security enhancement
+4500-4600   other
+
+EXPERIMENTAL
+5000-5100   experimental patches (BFQ, ...)
+
+Individual Patch Descriptions:
+--------------------------------------------------------------------------
+
+Patch:  1000_linux-6.1.1.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.1
+
+Patch:  1001_linux-6.1.2.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.2
+
+Patch:  1002_linux-6.1.3.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.3
+
+Patch:  1003_linux-6.1.4.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.4
+
+Patch:  1004_linux-6.1.5.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.5
+
+Patch:  1005_linux-6.1.6.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.6
+
+Patch:  1006_linux-6.1.7.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.7
+
+Patch:  1007_linux-6.1.8.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.8
+
+Patch:  1008_linux-6.1.9.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.9
+
+Patch:  1009_linux-6.1.10.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.10
+
+Patch:  1010_linux-6.1.11.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.11
+
+Patch:  1011_linux-6.1.12.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.12
+
+Patch:  1012_linux-6.1.13.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.13
+
+Patch:  1013_linux-6.1.14.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.14
+
+Patch:  1014_linux-6.1.15.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.15
+
+Patch:  1015_linux-6.1.16.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.16
+
+Patch:  1016_linux-6.1.17.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.17
+
+Patch:  1017_linux-6.1.18.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.18
+
+Patch:  1018_linux-6.1.19.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.19
+
+Patch:  1019_linux-6.1.20.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.20
+
+Patch:  1020_linux-6.1.21.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.21
+
+Patch:  1021_linux-6.1.22.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.22
+
+Patch:  1022_linux-6.1.23.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.23
+
+Patch:  1023_linux-6.1.24.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.24
+
+Patch:  1024_linux-6.1.25.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.25
+
+Patch:  1025_linux-6.1.26.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.26
+
+Patch:  1026_linux-6.1.27.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.27
+
+Patch:  1027_linux-6.1.28.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.28
+
+Patch:  1028_linux-6.1.29.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.29
+
+Patch:  1029_linux-6.1.30.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.30
+
+Patch:  1030_linux-6.1.31.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.31
+
+Patch:  1031_linux-6.1.32.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.32
+
+Patch:  1032_linux-6.1.33.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.33
+
+Patch:  1033_linux-6.1.34.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.34
+
+Patch:  1034_linux-6.1.35.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.35
+
+Patch:  1035_linux-6.1.36.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.36
+
+Patch:  1036_linux-6.1.37.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.37
+
+Patch:  1037_linux-6.1.38.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.38
+
+Patch:  1038_linux-6.1.39.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.39
+
+Patch:  1039_linux-6.1.40.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.40
+
+Patch:  1040_linux-6.1.41.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.41
+
+Patch:  1041_linux-6.1.42.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.42
+
+Patch:  1042_linux-6.1.43.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.43
+
+Patch:  1043_linux-6.1.44.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.44
+
+Patch:  1044_linux-6.1.45.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.45
+
+Patch:  1045_linux-6.1.46.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.46
+
+Patch:  1046_linux-6.1.47.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.47
+
+Patch:  1047_linux-6.1.48.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.48
+
+Patch:  1048_linux-6.1.49.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.49
+
+Patch:  1049_linux-6.1.50.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.50
+
+Patch:  1050_linux-6.1.51.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.51
+
+Patch:  1051_linux-6.1.52.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.52
+
+Patch:  1052_linux-6.1.53.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.53
+
+Patch:  1053_linux-6.1.54.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.54
+
+Patch:  1054_linux-6.1.55.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.55
+
+Patch:  1055_linux-6.1.56.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.56
+
+Patch:  1056_linux-6.1.57.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.57
+
+Patch:  1057_linux-6.1.58.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.58
+
+Patch:  1058_linux-6.1.59.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.59
+
+Patch:  1059_linux-6.1.60.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.60
+
+Patch:  1060_linux-6.1.61.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.61
+
+Patch:  1061_linux-6.1.62.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.62
+
+Patch:  1062_linux-6.1.63.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.63
+
+Patch:  1063_linux-6.1.64.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.64
+
+Patch:  1064_linux-6.1.65.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.65
+
+Patch:  1065_linux-6.1.66.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.66
+
+Patch:  1066_linux-6.1.67.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.67
+
+Patch:  1067_linux-6.1.68.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.68
+
+Patch:  1068_linux-6.1.69.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.69
+
+Patch:  1069_linux-6.1.70.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.70
+
+Patch:  1070_linux-6.1.71.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.71
+
+Patch:  1071_linux-6.1.72.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.72
+
+Patch:  1072_linux-6.1.73.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.73
+
+Patch:  1073_linux-6.1.74.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.74
+
+Patch:  1074_linux-6.1.75.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.75
+
+Patch:  1075_linux-6.1.76.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.76
+
+Patch:  1076_linux-6.1.77.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.77
+
+Patch:  1077_linux-6.1.78.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.78
+
+Patch:  1078_linux-6.1.79.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.79
+
+Patch:  1079_linux-6.1.80.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.80
+
+Patch:  1080_linux-6.1.81.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.81
+
+Patch:  1081_linux-6.1.82.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.82
+
+Patch:  1082_linux-6.1.83.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.83
+
+Patch:  1083_linux-6.1.84.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.84
+
+Patch:  1084_linux-6.1.85.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.85
+
+Patch:  1085_linux-6.1.86.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.86
+
+Patch:  1086_linux-6.1.87.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.87
+
+Patch:  1087_linux-6.1.88.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.88
+
+Patch:  1088_linux-6.1.89.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.89
+
+Patch:  1089_linux-6.1.90.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.90
+
+Patch:  1090_linux-6.1.91.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.91
+
+Patch:  1091_linux-6.1.92.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.92
+
+Patch:  1092_linux-6.1.93.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.93
+
+Patch:  1093_linux-6.1.94.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.94
+
+Patch:  1094_linux-6.1.95.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.95
+
+Patch:  1095_linux-6.1.96.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.96
+
+Patch:  1096_linux-6.1.97.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.97
+
+Patch:  1097_linux-6.1.98.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.98
+
+Patch:  1098_linux-6.1.99.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.99
+
+Patch:  1099_linux-6.1.100.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.100
+
+Patch:  1100_linux-6.1.101.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.101
+
+Patch:  1101_linux-6.1.102.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.102
+
+Patch:  1102_linux-6.1.103.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.103
+
+Patch:  1103_linux-6.1.104.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.104
+
+Patch:  1104_linux-6.1.105.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.105
+
+Patch:  1104_linux-6.1.105.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.105
+
+Patch:  1105_linux-6.1.106.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.106
+
+Patch:  1106_linux-6.1.107.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.107
+
+Patch:  1107_linux-6.1.108.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.108
+
+Patch:  1108_linux-6.1.109.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.109
+
+Patch:  1109_linux-6.1.110.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.110
+
+Patch:  1110_linux-6.1.111.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.111
+
+Patch:  1111_linux-6.1.112.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.112
+
+Patch:  1112_linux-6.1.113.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.113
+
+Patch:  1113_linux-6.1.114.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.114
+
+Patch:  1114_linux-6.1.115.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.115
+
+Patch:  1115_linux-6.1.116.patch
+From:   https://www.kernel.org
+Desc:   Linux 6.1.116
+
+Patch:  1500_XATTR_USER_PREFIX.patch
+From:   https://bugs.gentoo.org/show_bug.cgi?id=470644
+Desc:   Support for namespace user.pax.* on tmpfs.
+
+Patch:  1510_fs-enable-link-security-restrictions-by-default.patch
+From:   http://sources.debian.net/src/linux/3.16.7-ckt4-3/debian/patches/debian/fs-enable-link-security-restrictions-by-default.patch
+Desc:   Enable link security restrictions by default.
+
+Patch:  1700_sparc-address-warray-bound-warnings.patch
+From:		https://github.com/KSPP/linux/issues/109
+Desc:		Address -Warray-bounds warnings 
+
+Patch:  2000_BT-Check-key-sizes-only-if-Secure-Simple-Pairing-enabled.patch
+From:   https://lore.kernel.org/linux-bluetooth/20190522070540.48895-1-marcel@holtmann.org/raw
+Desc:   Bluetooth: Check key sizes only when Secure Simple Pairing is enabled. See bug #686758
+
+Patch:  2010_Fix_randomize_layout_crash_in_struct_neigh.patch
+From:   https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=45b3fae4675d
+Desc:   neighbour: Fix __randomize_layout crash in struct neighbour
+
+Patch:  2600_HID-revert-Y900P-fix-ThinkPad-L15-touchpad.patch
+From:   https://bugs.gentoo.org/942797
+Desc:   Revert: HID: multitouch: Add support for lenovo Y9000P Touchpad
+
+Patch:  2910_bfp-mark-get-entry-ip-as--maybe-unused.patch
+From:   https://www.spinics.net/lists/stable/msg604665.html
+Desc:   bpf: mark get_entry_ip as __maybe_unused
+
+Patch:  2920_sign-file-patch-for-libressl.patch
+From:   https://bugs.gentoo.org/717166
+Desc:   sign-file: full functionality with modern LibreSSL
+
+Patch:  2950_kbuild-CRC32-1MB-dict-xz-modules.patch
+From:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git/commit/?h=kbuild&id=fbf5892df21a8ccfcb2fda0fd65bc3169c89ed28
+Desc:   kbuild: Use CRC32 and a 1MiB dictionary for XZ compressed modules
+
+Patch:  3000_Support-printing-firmware-info.patch
+From:   https://bugs.gentoo.org/732852
+Desc:   Print firmware info (Reqs CONFIG_GENTOO_PRINT_FIRMWARE_INFO). Thanks to Georgy Yakovlev
+
+Patch:  4567_distro-Gentoo-Kconfig.patch
+From:   Tom Wijsman <TomWij@gentoo.org>
+Desc:   Add Gentoo Linux support config settings and defaults.
+
+Patch:  5000_shiftfs-6.1.patch
+From:   https://github.com/toby63/shiftfs-dkms
+Desc:   Kernel fs for Linux that provides easier uid/gid-shifting for containers
+
+Patch:  5010_enable-cpu-optimizations-universal.patch
+From:   https://github.com/graysky2/kernel_compiler_patch
+Desc:   Kernel >= 5.15 patch enables gcc = v11.1+ optimizations for additional CPUs.

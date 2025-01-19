@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://liguros.gitlab.io/dtd/metadata.dtd">
+<pkgmetadata>
+ <maintainer type="project">
+  <email>1mouse3@gmail.com</email>
+  <name>liguros-xxx</name>
+ </maintainer>
+ <maintainer type="project">
+  <email>perl@gentoo.org</email>
+  <name>Gentoo Perl Project</name>
+ </maintainer>
+ 
+ <origin>gentoo-staging</origin>
+ <stabilize-allarches/>
+</pkgmetadata>

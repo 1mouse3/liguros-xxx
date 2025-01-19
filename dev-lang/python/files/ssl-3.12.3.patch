@@ -1,0 +1,37 @@
+diff -urN Python-3.12.3.orig/Modules/_ssl.c Python-3.12.3/Modules/_ssl.c
+--- Python-3.12.3.orig/Modules/_ssl.c	2024-05-22 21:13:21.996396074 +0200
++++ Python-3.12.3/Modules/_ssl.c	2024-05-22 21:22:40.899410803 +0200
+@@ -4528,6 +4528,7 @@
+         return NULL;
+     }
+     switch (X509_OBJECT_get_type(obj)) {
++#if !defined(LIBRESSL_VERSION_NUMBER)
+         case X509_LU_X509:
+             ok = X509_OBJECT_set1_X509(ret, X509_OBJECT_get0_X509(obj));
+             break;
+@@ -4536,6 +4537,7 @@
+             ok = X509_OBJECT_set1_X509_CRL(
+                 ret, X509_OBJECT_get0_X509_CRL((X509_OBJECT *)obj));
+             break;
++#endif
+         default:
+             /* We cannot duplicate unrecognized types in a polyfill, but it is
+              * safe to leave an empty object. The caller will ignore it. */
+@@ -4552,6 +4554,7 @@
+ static STACK_OF(X509_OBJECT) *
+ X509_STORE_get1_objects(X509_STORE *store)
+ {
++#if !defined(LIBRESSL_VERSION_NUMBER)
+     STACK_OF(X509_OBJECT) *ret;
+     if (!X509_STORE_lock(store)) {
+         return NULL;
+@@ -4560,6 +4563,9 @@
+                                    x509_object_dup, X509_OBJECT_free);
+     X509_STORE_unlock(store);
+     return ret;
++#else
++    return NULL;
++#endif
+ }
+ #endif
+ 

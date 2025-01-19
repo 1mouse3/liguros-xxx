@@ -1,0 +1,35 @@
+diff -urN Python-3.12.3.orig/Modules/_ssl.c Python-3.12.3/Modules/_ssl.c
+--- Python-3.12.3.orig/Modules/_ssl.c	2024-05-24 21:55:04.871846813 +0200
++++ Python-3.12.3/Modules/_ssl.c	2024-05-24 21:58:24.578833486 +0200
+@@ -4528,6 +4528,7 @@
+         return NULL;
+     }
+     switch (X509_OBJECT_get_type(obj)) {
++#if !defined(LIBRESSL_VERSION_NUMBER)
+         case X509_LU_X509:
+             ok = X509_OBJECT_set1_X509(ret, X509_OBJECT_get0_X509(obj));
+             break;
+@@ -4536,6 +4537,7 @@
+             ok = X509_OBJECT_set1_X509_CRL(
+                 ret, X509_OBJECT_get0_X509_CRL((X509_OBJECT *)obj));
+             break;
++#endif
+         default:
+             /* We cannot duplicate unrecognized types in a polyfill, but it is
+              * safe to leave an empty object. The caller will ignore it. */
+@@ -4549,6 +4551,7 @@
+     return ret;
+ }
+ 
++#if !defined(LIBRESSL_VERSION_NUMBER)
+ static STACK_OF(X509_OBJECT) *
+ X509_STORE_get1_objects(X509_STORE *store)
+ {
+@@ -4562,6 +4565,7 @@
+     return ret;
+ }
+ #endif
++#endif
+ 
+ PyDoc_STRVAR(PySSLContext_sni_callback_doc,
+ "Set a callback that will be called when a server name is provided by the SSL/TLS client in the SNI extension.\n\

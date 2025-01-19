@@ -1,0 +1,176 @@
+# fix the manifst
+# ebuild /var/git/liguros-repo/sys-kernel/debian-sources/debian-sources-6.1.27_p1-r1.ebuild manifest
+#
+#this the tree needed to get a build to work
+
+/var/git/liguros-xxx/dev-lang/python/Manifest
+/var/git/liguros-xxx/dev-lang/python/files/*patch
+/var/git/liguros-xxx/dev-lang/python/python-3.9.21.ebuild
+/var/git/liguros-xxx/eclass/*
+
+# switch bash for dash
+#nano /usr/share/eselect/modules/sh.eselect
+#eselect sh set dash
+
+# fix libdev-zero
+echo " 
+prefix=/usr
+exec_prefix=/usr
+libdir=/usr/lib64
+includedir=/usr/include
+" >> /usr/lib64/pkgconfig/libudev.pc
+
+USE="static-libs minimal -python_targets_python3_12 -python_targets_python3_13 python_targets_python3_9 -python_targets_python3_11" emerge -avO dev-python/exceptiongroup dev-python/pathspec dev-python/pluggy dev-python/trove-classifiers dev-python/hatchling dev-python/hatch-vcs dev-python/urllib3
+dev-python/pathspec dev-python/pluggy dev-python/hatchling dev-python/trove-classifiers dev-python/hatch-vcs dev-python/ordered-set dev-python/pyelftools dev-python/pyparsing dev-python/python-distutils-extra dev-python/typing-extensions dev-python/pip
+dev-python/gpep517 dev-python/jaraco-context dev-python/editables dev-python/pyproject-metadata dev-python/more-itertools dev-python/jaraco-text dev-python/pathspec dev-python/trove-classifiers dev-python/wheel dev-python/jaraco-functools dev-python/platformdirs dev-python/packaging dev-python/jaraco-collections dev-python/pyproject-metadata dev-python/virtualenv
+dev-python/meson-python dev-python/cython dev-build/meson dev-python/setuptools-scm dev-python/sip dev-python/setuptools dev-python/flit-core dev-python/tomli dev-python/installer
+dev-python/pygments dev-python/colorama dev-python/docutils dev-python/filelock dev-python/sphinx dev-python/sphinxcontrib-jquery dev-python/numpy dev-python/hatch-vcs dev-python/pygobject dev-python/pycairo dev-python/commonmark dev-python/scikit-build-core
+dev-python/dbus-python dev-python/pygraphviz dev-python/sphinx-rtd-theme dev-python/pyscard dev-python/dulwich dev-python/setuptools-rust dev-python/sphinxcontrib-serializinghtml dev-python/sphinxcontrib-qthelp dev-python/sphinxcontrib-jsmath dev-python/sphinxcontrib-htmlhelp dev-python/sphinxcontrib-devhelp dev-python/sphinxcontrib-applehelp dev-python/crashtest  dev-python/poetry-plugin-export dev-python/rich dev-python/requests-toolbelt  dev-python/cachecontrol dev-python/requests dev-python/reflink dev-python/etuples dev-python/cons dev-python/markdown-it-py dev-python/cffi dev-python/pexpect dev-python/build dev-python/importlib-metadata dev-python/pyyaml dev-python/mako dev-python/logical-unification dev-python/linkify-it-py dev-python/pycparser dev-python/msgpack dev-python/jinja dev-python/pefile dev-python/flit_scm dev-python/tomlkit dev-python/shellingham dev-python/pkginfo dev-python/jeepney dev-python/six dev-python/discid dev-python/jaraco-classes dev-python/backports-tarfile dev-python/PyQt-builder dev-python/PyQt6-sip dev-python/toolz dev-python/zipp dev-python/uc-micro-py dev-python/mdurl dev-python/truststore dev-python/resolvelib dev-python/distro dev-python/semantic-version dev-python/ptyprocess dev-python/ply dev-python/snowballstemmer dev-python/imagesize dev-python/alabaster dev-python/PySocks dev-python/distlib dev-python/olefile dev-python/idna dev-python/charset-normalizer dev-python/certifi dev-python/multipledispatch dev-python/pyproject-hooks dev-python/markupsafe
+lark fastjsonschema dev-python/poetry-core poetry  dev-python/fido2
+
+# remove paython3_11 lingering
+
+USE="python_targets_python3_9 -python_targets_python3_11 python_targets_python3_12" emerge -av app-crypt/gpgme app-misc/ca-certificates dev-build/meson-format-array dev-libs/boost  dev-libs/icu dev-libs/libxml2 dev-libs/libxslt dev-python/ordered-set dev-python/pyelftools dev-python/pyparsing dev-python/python-distutils-extra dev-python/typing-extensions dev-util/pahole dev-util/pahole sys-apps/file sys-apps/kmod sys-apps/usbutils sys-apps/util-linux
+
+#now to get qt stuff sorted
+
+USE="qml ssl -python_targets_python3_9" emerge -avO =dev-qt/qtbase-6.7.3-r2 dev-qt/qtnetwork dev-qt/qtnetworkauth dev-python/networkx =pyqt6-6.7.1-r1 =dev-python/pyqt6-sip-13.9.1::liguros-xxx
+
+#fix missing perl
+
+USE="static-libs minimal -python_targets_python3_13 python_targets_python3_9 -python_targets_python3_11" emerge -av dev-perl/Capture-Tiny dev-vcs/git virtual/perl-parent dev-perl/MailTools virtual/perl-ExtUtils-CBuilder  net-misc/openssh dev-lang/python virtual/perl-CPAN-Meta virtual/perl-ExtUtils-Manifest virtual/perl-Digest-SHA virtual/perl-Test-Harness dev-perl/ExtUtils-LibBuilder virtual/perl-Getopt-Long dev-perl/Digest-HMAC dev-perl/Locale-gettext virtual/perl-JSON-PP virtual/perl-CPAN virtual/perl-ExtUtils-ParseXS dev-perl/ExtUtils-PkgConfig virtual/perl-Data-Dumper dev-perl/ExtUtils-CppGuess perl-core/File-Temp virtual/perl-Encode dev-perl/Test-NoWarnings perl-core/Test-Harness dev-perl/ExtUtils-Config dev-perl/Parse-RecDescent virtual/perl-Module-Metadata virtual/perl-Carp dev-perl/Tie-IxHash virtual/perl-MIME-Base64 virtual/perl-Perl-OSType virtual/perl-Text-Balanced virtual/perl-version dev-perl/File-Which dev-perl/ExtUtils-XSpp virtual/perl-IO dev-perl/Test-Warn dev-perl/ExtUtils-Depends dev-perl/ExtUtils-HasCompiler dev-perl/ExtUtils-MakeMaker-CPANfile dev-perl/TimeDate dev-perl/Authen-SASL dev-perl/Sort-Versions virtual/perl-Parse-CPAN-Meta perl-core/Scalar-List-Utils dev-perl/Net-SSLeay dev-perl/IO-Socket-SSL virtual/perl-ExtUtils-Install virtual/perl-File-Temp virtual/perl-CPAN-Meta-YAML dev-perl/ExtUtils-Typemaps-Default virtual/perl-Text-ParseWords dev-perl/ExtUtils-AutoInstall virtual/perl-podlators dev-perl/ExtUtils-CChecker dev-perl/ExtUtils-F77 dev-perl/ExtUtils-Helpers dev-perl/ExtUtils-InstallPaths virtual/perl-Exporter virtual/perl-Test-Simple dev-perl/Sub-Uplevel virtual/perl-Digest-MD5 dev-perl/Test-Exception virtual/perl-Scalar-List-Utils perl-core/Getopt-Long dev-perl/Module-CPANfile virtual/perl-libnet dev-perl/ExtUtils-XSBuilder virtual/perl-File-Spec dev-perl/Error dev-perl/Module-Build virtual/perl-ExtUtils-MakeMaker 
+
+#fix missing egl
+emerge -avO media-libs/freeglut dev-perl/OpenGL virtual/opengl 
+emerge -avO gui-libs/eglexternalplatform gui-libs/egl-wayland
+
+# sort out BFD
+emerge -av sys-libs/binutils-libs sys-devel/binutils-config sys-devel/binutils 
+
+# update gcc and glibc and remove old that causes time error
+USE="-pam ssl" emerge -av dev-util/makeheaders gcc-config glibc 
+emerge -avc gcc-13
+
+#gawk to mawk
+
+ dev-build/meson dev-python/pyproject-metadata dev-python/meson-python 
+
+#now kernel and firmware
+emerge -av platformdirs app-crypt/debian-archive-keyring sys-apps/debianutils  sys-kernel/debian-sources x11-misc/xdg-utils =x11-drivers/nvidia-drivers-470.256.02
+
+USE="-ssl static-libs minimal -python_targets_python3_13 python_targets_python3_12 -python_targets_python3_9 -python_targets_python3_11" emerge -av dev-util/maturin app-emulation/virt-firmware dev-python/cryptography::liguros-xxx
+
+rc-update add kernel-bootcfg-boot-successful default
+
+emerge -av sys-firmware/intel-microcode sys-apps/iucode_tool
+rm /efi/EFI/Gentoo/early_ucode.cpio
+iucode_tool -S --write-earlyfw=/efi/EFI/Gentoo/early_ucode.cpio /lib/firmware/intel-ucode/*
+
+#add spell check tool
+emerge -av aspell app-dicts/aspell-es app-dicts/aspell-en app-dicts/aspell-de dev-perl/Text-Aspell
+
+#now qt and selinux can be installed
+FEATURES="-selinux" USE="-ssl qml -python_targets_python3_11 python_targets_python3_12" emerge -av dev-python/PyQt6 qtbase selinux-base app-admin/setools selinux-base-policy selinux-policykit selinux-dbus
+
+cd /usr/share/selinux/mcs
+semodule -i base.pp -i $(ls *.pp | grep -v base.pp | grep -v unconfined.pp)
+
+
+#now with selinux installed, busybox can to with mdev support
+emerge -av busybox
+
+#now to mdev
+rc-update add mdev sysinit
+
+
+
+#then need to fill the eclass folder with items like this that showed up in errors
+
+alternatives.eclass      flag-o-matic.eclass      multilib.eclass          python-any-r1.eclass     python-utils-r1.eclass   
+autotools.eclass         gnuconfig.eclass         multiprocessing.eclass   python-r1.eclass         toolchain-funcs.eclass   
+check-reqs.eclass        libtool.eclass           pax-utils.eclass         python-single-r1.eclass  verify-sig.eclass  
+
+# this is to fix a build from scratch
+
+USE="-gui -qt6" emerge -avO cmake
+USE="-sqlite -sql -quick3d -printsupport -svg -gui -opengl -X -vulkan -widgets -cups -libinput qml python_targets_python3_9 -python_targets_python3_11 python_targets_python3_12" emerge -avO qtbase
+
+
+
+#rsync -a /usr/lib64/cmake/Qt6* /mnt/gentoo/usr/lib64/cmake/
+#rsync -a /usr/lib64/qt6* /mnt/gentoo/usr/lib64/
+
+
+emerge -av busybox
+
+emerge -avO =virtual/perl-File-Spec-3.900.0::gentoo
+
+libressl 
+rm /usr/lib32/libudev.so.1
+rm /usr/lib32/libudev.so.1.6.3
+ln -fs /usr/lib64/libudev.so.1 /usr/lib32/libudev.so.1
+ln -fs /usr/lib3644/libudev.so.1.6.3 /usr/lib32/libudev.so.1.6.3
+
+app-crypt/pinentry
+app-portage/getuto
+app-crypt/gnupg
+sys-apps/portage
+dev-java/java-config
+sys-devel/gettext
+sys-apps/acl
+sys-fs/btrfs-progs
+sys-kernel/debian-sources
+
+
+USE="-sqlite -sql -quick3d -printsupport -svg -opengl -vulkan -cups -libinput qml python_targets_python3_9 -python_targets_python3_11 python_targets_python3_12" emerge -avO qtbase
+
+pep517
+dev-libs/jsoncpp
+ln -fs /usr/src/linux-6.1.27_p1-debian-r1  /usr/src/linux
+x11-libs/libXau 
+x11-libs/libXdmcp 
+x11-base/xorg-proto 
+x11-base/xcb-proto 
+app-text/docbook-xml-dtd 
+app-text/xmlto 
+app-portage/gentoolkit
+cmake
+x11-libs/libxcb 
+x11-libs/libxkbcommon 
+virtual/perl-podlators
+libproxy
+virtual/perl-Data-Dumper  
+dev-perl/ExtUtils-MakeMaker-CPANfile
+dev-util/vulkan-headers 
+qtbase
+
+dev-python/networkx
+dev-python/setuptools
+dev-ruby/abstract
+setuptools-scm
+ dev-python/sip
+PyQt-builder
+dev-python/PyQt6
+FEATURES=" -selinux" selinux-base app-admin/setools
+
+ cd /var/git/liguros-repo/dev-perl/; for dir in `ls -1d perl*`; do emerge -avupO $dir;done
+
+
+
+@system??
+
+/var/db/repos/gentoo/profiles/base/packages
+/var/db/repos/gentoo/profiles/prefix/linux/packages
+
+
+echo "
+# busy box mdev
+
+-*dev-libs/openssl
+-*sys-apps/gawk
+*sys-apps/mawk
+*sys-apps/busybox
+*sys-apps/util-linux
+*sys-fs/mdevd
+*dev-libs/libressl
+" >> /var/git/liguros-repo/profiles/base/packages

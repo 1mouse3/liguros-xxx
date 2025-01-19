@@ -1,0 +1,13 @@
+diff -urN Python-3.12.0.orig/configure.ac Python-3.12.0/configure.ac
+--- Python-3.12.0.orig/configure.ac	2023-10-16 18:42:40.079345122 +0200
++++ Python-3.12.0/configure.ac	2023-10-16 18:43:27.662341947 +0200
+@@ -7090,9 +7090,6 @@
+     ], [
+       OBJ_nid2sn(NID_md5);
+       OBJ_nid2sn(NID_sha1);
+-      OBJ_nid2sn(NID_sha3_512);
+-      OBJ_nid2sn(NID_blake2b512);
+-      EVP_PBE_scrypt(NULL, 0, NULL, 0, 2, 8, 1, 0, NULL, 0);
+     ])], [ac_cv_working_openssl_hashlib=yes], [ac_cv_working_openssl_hashlib=no])
+   ])
+ ])

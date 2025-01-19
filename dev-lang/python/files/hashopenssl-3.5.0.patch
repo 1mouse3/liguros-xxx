@@ -1,0 +1,12 @@
+diff -urN Python-2.7.18.orig/Modules/_hashopenssl.c Python-2.7.18/Modules/_hashopenssl.c
+--- Python-2.7.18.orig/Modules/_hashopenssl.c	2022-04-10 11:43:51.038101901 +0200
++++ Python-2.7.18/Modules/_hashopenssl.c	2022-04-10 12:07:53.422071515 +0200
+@@ -60,7 +60,7 @@
+ /* OpenSSL < 1.1.0 */
+ #define EVP_MD_CTX_new EVP_MD_CTX_create
+ #define EVP_MD_CTX_free EVP_MD_CTX_destroy
+-#define HAS_FAST_PKCS5_PBKDF2_HMAC 0
++#define HAS_FAST_PKCS5_PBKDF2_HMAC 1
+ #include <openssl/hmac.h>
+ #else
+ /* OpenSSL >= 1.1.0 */
