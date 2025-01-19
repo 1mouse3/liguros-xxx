@@ -219,7 +219,7 @@ pkg_setup() {
 src_unpack() {
 	# Make and go to working dircetory
         mkdir ${S}
-	cd ${WORKDIR}}
+	cd ${WORKDIR}
 
 	# unpack the kernel sources
 	unpack ${KERNEL} || die "failed to unpack kernel sources"
