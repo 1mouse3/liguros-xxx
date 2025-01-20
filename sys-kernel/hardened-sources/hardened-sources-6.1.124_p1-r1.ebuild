@@ -95,7 +95,7 @@ SRC_DIR="
 
 S="${WORKDIR}/linux-${DEB_PV_BASE}"
 
-FILESDIR="/var/tmp/portage/sys-kernel/hardened-sources-6.1.124_p1-r1/files"
+FILESDIR="/var/git/liguros-xxx/sys-kernel/hardened-sources/files"
 
 # TODO: manage HARDENED_PATCHES and GENTOO_PATCHES can be managed in a git repository and packed into tar balls per version.
 
@@ -237,11 +237,10 @@ src_unpack() {
 
 src_prepare() {
 	debug-print-function ${FUNCNAME} "${@}"
-#        cd ${S}
 
 	### PATCHES ###
 	cd ${WORKDIR}
-        dir
+
         # only apply these if USE=hardened as the patches will break proprietary userspace and some others.
         # apply hardening patches
         einfo "Applying graphene patches ..."
@@ -253,9 +252,6 @@ src_prepare() {
         #cp -ra "${WORKDIR}"/debian "${S}"/debian 
 
         cd ${S}
-
-        # copy the debian patches into the kernel sources work directory (config-extract requires this).
-#	cp -raf "${S}"/debian "${WORKDIR}"
 
 	# apply debian patches
 	for debpatch in $( get_patch_list "${WORKDIR}/debian/patches/series" ); do
@@ -275,19 +271,17 @@ src_prepare() {
         done
     fi
 
-#	cd ${S}
-
 	# append EXTRAVERSION to the kernel sources Makefile
 	sed -i -e "s:^\(EXTRAVERSION =\).*:\1 ${MODULE_EXT}:" Makefile || die "failed to append EXTRAVERSION to kernel Makefile"
 
 	# todo: look at this, haven't seen it used in many cases.
 	sed	-i -e 's:#export\tINSTALL_PATH:export\tINSTALL_PATH:' Makefile || die "failed to fix-up INSTALL_PATH in kernel Makefile"
+
         # copy the debian patches into the kernel sources work directory (config-extract requires this).
         cp -a "${WORKDIR}"/debian "${S}"/debian
 
         # punt the debian devs certificates
         rm -rf "${S}"/debian/certs
-
 
 	### GENERATE CONFIG ###
 
@@ -465,10 +459,6 @@ src_prepare() {
 }
 
 src_configure() {
-	if use binary; then
-
-        debug-print-function ${FUNCNAME} "${@}"
-
         tc-export_build_env
         MAKEARGS=(
             V=1
@@ -493,19 +483,17 @@ src_configure() {
         )
 
         mkdir -p "${WORKDIR}"/modprep || die
+
+	dir "${WORKDIR}"
+
         cp "${T}"/.config "${WORKDIR}"/modprep/ || die
         emake O="${WORKDIR}"/modprep "${MAKEARGS[@]}" olddefconfig || die "kernel configure failed"
         emake O="${WORKDIR}"/modprep "${MAKEARGS[@]}" modules_prepare || die "modules_prepare failed"
         cp -pR "${WORKDIR}"/modprep "${WORKDIR}"/build || die
-    fi
 }
 
 src_compile() {
-	if use binary; then
-        debug-print-function ${FUNCNAME} "${@}"
-
         emake O="${WORKDIR}"/build "${MAKEARGS[@]}" all || "kernel build failed"
-    fi
 }
 
 src_install() {
