@@ -10,26 +10,27 @@ EAPI=8
 
 HOMEPAGE="https://github.com/zeppe-lin/mkinitramfs"
 SRC_URI="https://github.com/zeppe-lin/mkinitramfs/archive/refs/tags/v0.5.tar.gz"
-IUSE=""
+
+IUSE="uefi mdevd busybox device-mapper lvm luks blkid xz zfs"
 
 
-DEPEND="sys-apps/sed"
 DEPEND="
 	ldd
-	strip
-	blkid
-	mdevd
-	dm-crypt? ( sys-fs/cryptsetup )
+	ys-apps/util-linux[blkid,uuid,partuuid]
+	mdevd? ( sys-fs/mdevd )
+	luks? ( sys-fs/cryptsetup )
 	device-mapper? ( sys-fs/lvm2 )
-	sys-apps/busybox[loadkmap,mdev]
-	kmod
+	busybox? ( sys-apps/busybox[loadkmap,mdev] )
 	zfs? ( sys-fs/zfs )
 	xfs? ( sys-fs/xfsprogs )
+        e2fs? ( sys-fs/e2fsprogs )
 	xz? ( app-arch/xz-utils )
-	mdadm? ( sys-fs/mdadm )
+	#mdadm? ( sys-fs/mdadm )
 "
 
-RDEPEND="sys-apps/sed"
+RDEPEND="sys-apps/sed, !systemd"
+IDEPEND="modules? ( sys-apps/kmod[tools] )"
+RESTRICT="strip"
 DESCRIPTION=
 KEYWORDS="~x86 ~amd64 ~ppc"
 
