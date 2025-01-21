@@ -1,4 +1,4 @@
-# Source from this lot of folks for this ebuild by mouse <1mouse3@gmail.com>
+# Sourced from this lot of folks for this ebuild by mouse <1mouse3@gmail.com>
 #
 # Copyright (C) 2020-2021 illiliti                 <illiliti@protonmail.com>
 # Copyright (C) 2020      Timothy Robert Bednarzyk <trbednarzyk@protonmail.com>
@@ -38,7 +38,7 @@ KEYWORDS="~x86 ~amd64 ~ppc"
 src_unpack(){
 	unpack ${A}
 	cd "${S}"
-	sed -i 's:DESTDIR:PREFIX:' src/SFML/mkinitramfs-0.5/Makefile
+	sed -i 's:DESTDIR:PREFIX:' src/mkinitramfs-0.5/Makefile
 	sed -i 's:$(PREFIX):$(DESTDIR)$(PREFIX):' src/mkinitramfs-0.5/Makefile
 }
 src_compile(){
