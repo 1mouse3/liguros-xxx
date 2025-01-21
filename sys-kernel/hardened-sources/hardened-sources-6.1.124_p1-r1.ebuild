@@ -96,6 +96,7 @@ SRC_DIR="
 S="${WORKDIR}/linux-${DEB_PV_BASE}"
 
 FILESDIR="/var/git/liguros-xxx/sys-kernel/hardened-sources/files"
+SAVEDCONFIG=/etc/portage/savedconfig/${CATEGORY}/${PN}
 
 # TODO: manage HARDENED_PATCHES and GENTOO_PATCHES can be managed in a git repository and packed into tar balls per version.
 
@@ -219,7 +220,7 @@ pkg_setup() {
 
 src_unpack() {
         # unpack the kernel sources
-        unpack ${KERNEL} || die "failed to unpack kernel sources"
+	unpack ${KERNEL} || die "failed to unpack kernel sources"
 
 	# unpack the kernel patches
         unpack ${DEB_PATCH} || die "failed to unpack debian patches"
@@ -357,13 +358,13 @@ src_prepare() {
         echo "CONFIG_SLAB_MERGE_DEFAULT=n" >> .config
         echo "CONFIG_SLAB_FREELIST_RANDOM=y" >> .config
         echo "CONFIG_SLAB_FREELIST_HARDENED=y" >> .config
-        echo "CONFIG_SLAB_CANARY=y" >> .config
+        echo "CONFIG_RANDOM_KMALLOC_CACHES=y" >> .config   # this replaces CONFIG_SLAB_CANARY I think
         echo "CONFIG_SHUFFLE_PAGE_ALLOCATOR=y" >> .config
         echo "CONFIG_RANDOMIZE_BASE=y" >> .config
         echo "CONFIG_RANDOMIZE_MEMORY=y" >> .config
         echo "CONFIG_HIBERNATION=n" >> .config
         echo "CONFIG_HARDENED_USERCOPY=y" >> .config
-        echo "CONFIG_HARDENED_USERCOPY_FALLBACK=n" >> .config
+#        echo "CONFIG_HARDENED_USERCOPY_FALLBACK=n" >> .config
         echo "CONFIG_FORTIFY_SOURCE=y" >> .config
         echo "CONFIG_STACKPROTECTOR=y" >> .config
         echo "CONFIG_STACKPROTECTOR_STRONG=y" >> .config
@@ -371,8 +372,8 @@ src_prepare() {
         echo "CONFIG_ARCH_MMAP_RND_COMPAT_BITS=16" >> .config
         echo "CONFIG_INIT_ON_FREE_DEFAULT_ON=y" >> .config
         echo "CONFIG_INIT_ON_ALLOC_DEFAULT_ON=y" >> .config
-        echo "CONFIG_SLAB_SANITIZE_VERIFY=y" >> .config
-        echo "CONFIG_PAGE_SANITIZE_VERIFY=y" >> .config
+#        echo "CONFIG_SLAB_SANITIZE_VERIFY=y" >> .config
+#        echo "CONFIG_PAGE_SANITIZE_VERIFY=y" >> .config
 
         # gcc plugins
         if ! use clang; then
@@ -451,7 +452,7 @@ src_prepare() {
 
 	# get config into good state:
 	yes "" | make oldconfig >/dev/null 2>&1 || die
-	cp .config "${T}"/.config || die
+	cp "${SAVEDCONFIG}"/.config "${T}"/.config || die
 	make -s mrproper || die "make mrproper failed"
 
 	# Apply any user patches

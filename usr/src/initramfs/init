@@ -1,0 +1,185 @@
+#!/bin/busybox sh
+
+rescue_shell() {
+    echo "$@"
+    echo "Something went wrong. Dropping you to a shell."
+    # The symlinks are not required but it helps tab completion
+    busybox --install -s
+    printf 'Starting rescue subshell: %s\nExit with code 5 to replace /init with a shell running as pid 1\n' "$*"
+    /bin/sh
+    if [[ $? -eq 5 ]]; then exec /bin/sh; fi
+}
+
+# If you want to debug this script enable:
+set -x
+
+# dhcp
+
+ifconfig eth0 up
+udhcpc -t 5 -q -s /bin/simple.script
+
+# keymap
+
+loadkmap < /keymap.bmap
+
+### Prepare
+
+# clear the screen
+clear
+
+PATH="/sbin:/bin"
+echo "Mounting proc, sys and devtmpfs ..."
+mount -t devtmpfs devtmpfs /dev || rescue_shell "Error: mount /devtmpfs failed !"
+mount -t proc proc /proc || rescue_shell "Error: mount /proc failed !"
+mount -t sysfs sysfs /sys || rescue_shell "Error: mount /sysfs failed !"
+
+echo /sbin/mdev > /proc/sys/kernel/hotplug
+mdev -s
+
+# If you do very special things (like IMA) maybe you will need also:
+# echo "Mounting securityfs ..."
+# mount -t securityfs securityfs /sys/kernel/security || rescue_shell "Error: mount /sys/kernel/securityfs failed !"
+
+# Suppress outputs of the kernel
+echo 0 > /proc/sys/kernel/printk
+
+### INSERT here everything you want to do BEFORE mounting the root partition !
+
+echo
+echo "Hello World !"
+echo
+sleep 3
+
+### END insert 
+
+
+### Now we must mount the root partition. We have 3 choices to do this:
+
+# 1. Examination of the kernel command line parameter root=
+# OR
+# 2. Using a hardcoded value
+# OR
+# 3. Doing very special things ;-)
+
+# Option 1: Because in many examples of an init script this is done in a function, I dont change it:
+
+uuidlabel_root() {
+    for cmd in $(cat /proc/cmdline) ; do
+        case $cmd in
+        root=*)
+            type=$(echo $cmd | cut -d= -f2)
+            echo "Mounting rootfs"
+            if [ $type == "LABEL" ] || [ $type == "UUID" ] ; then
+                uuid=$(echo $cmd | cut -d= -f3)
+                mount -o ro $(findfs "$type"="$uuid") /mnt/root
+            else
+                mount -o ro $(echo $cmd | cut -d= -f2) /mnt/root
+            fi
+            ;;
+        esac
+    done
+}
+
+# mounting rootfs on /mnt/root
+uuidlabel_root || rescue_shell "Error mounting root partition !"
+
+# space separated list of mountpoints that ...
+mountpoints="/usr"
+# /var"
+# note: you can add more than just usr, but make sure they are declared in /usr/src/initramfs/initramfs_list
+
+# ... we want to find in /etc/fstab ...
+/bin/ln -s /mnt/root/etc/fstab /etc/fstab
+
+# loop through the list of mountpoints
+for m in $mountpoints ; do
+
+
+### END mounting root partition
+
+# Add in a different fsck
+
+# We need this for things that are mounted before localmount runs
+# like /usr and possibly /var
+check_filesystem() {
+    # most of code coming from /etc/init.d/fsck
+
+    local fsck_opts= check_extra= RC_UNAME=$(uname -s)
+
+    # FIXME : get_bootparam forcefsck
+    if [ -e /forcefsck ]; then
+        fsck_opts="$fsck_opts -f"
+        check_extra="(check forced)"
+    fi
+
+    echo "Checking local filesystem $check_extra : $1"
+
+    if [ "$RC_UNAME" = Linux ]; then
+        fsck_opts="$fsck_opts -C0 -T"
+    fi
+
+    trap : INT QUIT
+
+    # using our own fsck, not the builtin one from busybox
+    /sbin/fsck -p $fsck_opts $1
+
+    ret_val=$?
+    case $ret_val in
+        0)      return 0;;
+        1)      echo "Filesystem repaired"; return 0;;
+        2|3)    if [ "$RC_UNAME" = Linux ]; then
+                        echo "Filesystem repaired, but reboot needed"
+                        /sbin/reboot -f
+                else                       rescue_shell "Filesystem still have errors; manual fsck required"
+                fi;;
+        4)      if [ "$RC_UNAME" = Linux ]; then
+                        rescue_shell "Fileystem errors left uncorrected, aborting"
+                else
+                        echo "Filesystem repaired, but reboot needed"
+                        /sbin/reboot
+                fi;;
+        8)      echo "Operational error"; return 0;;
+        16)     echo "Use or Syntax Error"; return 16;;
+        32)     echo "fsck interrupted";;
+        127)    echo "Shared Library Error"; sleep 20; return 0;;
+        *)      echo $ret_val; echo "Some random fsck error - continuing anyway"; sleep 20; return 0;;
+    esac
+
+# rescue_shell can't find tty so its broken
+    rescue_shell
+}
+
+
+### Clean up. The init process will remount proc sys and dev later
+
+# Enable kernel messages
+echo 1 > /proc/sys/kernel/printk
+
+# If securityfs was also mounted:
+# echo "Unmounting securityfs ..."
+# umount /sys/kernel/security
+
+#echo $m
+
+    check_filesystem $m
+
+    echo "Mounting $m"
+    # mount the device and ...
+    mount $m || rescue_shell "Error while mounting $m"
+
+    # ... move the tree to its final location
+    mount --move $m "/mnt/root"$m || rescue_shell "Error while moving $m"
+done
+
+# That's put all the pieces together, now tidy up
+# The init process will remount proc sys and dev later
+
+echo "All done. Switching to real root."
+
+
+echo "Unmounting proc, sys and devtmpfs ..."
+umount /proc /sys /dev
+
+# switch to the real root and execute init
+exec /sbin/switch_root /mnt/root /sbin/init
+
