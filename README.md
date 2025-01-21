@@ -22,7 +22,9 @@ The config make function is broken right now and dont have a fix at the moment.
 
 ## usr/src/initramfs ##
 
-This was a initramfs make for gentoo but looks that I need to change it for this kernel, its for the config I provide but is broken.
+This was a initramfs made for gentoo but looks that I need to change it for this kernel, its for the config I provide but is broken.
+
+
 
 
 Thank give to those that made some of what in use and/or charge for use in this
