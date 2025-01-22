@@ -13,7 +13,7 @@ SLOT=$(ver_cut 1-2)
 
 RESTRICT="binchecks strip mirror"
 
-IUSE="binary btrfs clang custom-cflags debug dmraid dtrace ec2 firmware hardened iscsi libressl luks lvm mcelog mdadm microcode multipath nbd nfs plymouth selinux sign-modules symlink systemd wireguard zfs"
+IUSE="binary btrfs clang custom-cflags debug dmraid dtrace ec2 efistub firmware hardened iscsi libressl luks lvm mcelog mdadm microcode multipath nbd nfs plymouth selinux sign-modules symlink systemd wireguard zfs"
 
 REQUIRED_USE="hardened"
 

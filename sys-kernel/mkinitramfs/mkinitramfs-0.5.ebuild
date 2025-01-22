@@ -11,35 +11,48 @@ EAPI=8
 HOMEPAGE="https://github.com/zeppe-lin/mkinitramfs"
 SRC_URI="https://github.com/zeppe-lin/mkinitramfs/archive/refs/tags/v0.5.tar.gz"
 
-IUSE="uefi mdevd busybox device-mapper lvm luks blkid xz zfs"
+# findfs should give partuuid and getopt? ( app-misc/getopt ) broken
+
+IUSE="modules xfs ldd mdevd busybox device-mapper efistub findfs lvm luks blkid partuuid mdadm e2fs xz getopt mount cpio uefi-mkconfig sh secureboot switch_root zfs"
 
 
 DEPEND="
-	ldd
-	ys-apps/util-linux[blkid,uuid,partuuid]
+        ldd? ( sys-libs/glibc )
+        efistub? ( sys-kernel/hardened-sources )
+        uefi-mkconfig? ( sys-boot/uefi-mkconfig )
+        secureboot? ( sys-boot/shim )
+        sh? ( app-shells/bash )
+        cpio? ( app-alternatives/cpio )
+	sys-apps/util-linux[unicode,uuidd]
+        getopt? ( sys-apps/util-linux )
+        findfs? ( sys-apps/util-linux )
+        switch_root? ( sys-apps/util-linux )
+        mount? ( sys-apps/util-linux )
 	mdevd? ( sys-fs/mdevd )
 	luks? ( sys-fs/cryptsetup )
 	device-mapper? ( sys-fs/lvm2 )
-	busybox? ( sys-apps/busybox[loadkmap,mdev] )
+        busybox? ( sys-apps/busybox[mdev] )
 	zfs? ( sys-fs/zfs )
 	xfs? ( sys-fs/xfsprogs )
         e2fs? ( sys-fs/e2fsprogs )
 	xz? ( app-arch/xz-utils )
-	#mdadm? ( sys-fs/mdadm )
+	mdadm? ( sys-fs/mdadm )
 "
 
-RDEPEND="sys-apps/sed, !systemd"
+RDEPEND=""
 IDEPEND="modules? ( sys-apps/kmod[tools] )"
 RESTRICT="strip"
 DESCRIPTION=
 KEYWORDS="~x86 ~amd64 ~ppc"
 
+SLOT="0.5"
 
 src_unpack(){
 	unpack ${A}
 	cd "${S}"
-	sed -i 's:DESTDIR:PREFIX:' src/mkinitramfs-0.5/Makefile
-	sed -i 's:$(PREFIX):$(DESTDIR)$(PREFIX):' src/mkinitramfs-0.5/Makefile
+	sed -i mkinitramfs-${SLOT}/Makefile
+	sed -i mkinitramfs-${SLOT}/Makefile.lint
+        sed -i mkinitramfs-${SLOT}/config.mk
 }
 src_compile(){
 	emake || die
