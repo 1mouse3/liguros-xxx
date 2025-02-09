@@ -1,0 +1,152 @@
+echo GRAPHENE_PATCHES
+echo "0000 Brakes build tree if edited"
+    ./6.1/graphene-patches/0000-debian-gitignore-series.patch
+    ./6.1/graphene-patches/0001-giving-blank-patches-something-to-do.patch
+echo  #0#+8
+    ./6.1/graphene-patches/0002-firmware-remove-redundant-log-messages-from-drivers-patch.patch
+    ./6.1/graphene-patches/0003-wifi-mt76-do-not-run-mt76_unregister_device-on-unregistered-hw-patch.patch
+echo #1#-8
+    ./6.1/graphene-patches/0004-fs-enable-link-security-restrictions-by-default-patch.patch
+echo #2#+10
+    ./6.1/graphene-patches/0005-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by-default-patch.patch
+echo #3#-10
+    ./6.1/graphene-patches/0006-security-perf-allow-further-restriction-of-perf_event_open-patch.patch
+    ./6.1/graphene-patches/0007-efi-lock-down-the-kernel-if-booted-in-secure-boot-mo-patch.patch
+    ./6.1/graphene-patches/0008-netfilter-nf_tables-deactivate-anonymous-set-from-pr-patch.patch
+echo #5#-4
+    ./6.1/graphene-patches/0009-intel-iommu-add-kconfig-option-to-exclude-igpu-by-default-patch.patch
+    ./6.1/graphene-patches/0010-x86-make-x32-syscall-support-conditional-patch.patch
+    ./6.1/graphene-patches/0011-arm64-dts-rockchip-Enable-GPU-on-SOQuartz-CM4-patch.patch
+echo  #4#+4
+sleep 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

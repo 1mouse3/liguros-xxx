@@ -1,0 +1,14 @@
+echo GENTOO_PATCHES
+    ./6.1/gentoo-patches/1500_XATTR_USER_PREFIX.patch
+    ./6.1/gentoo-patches/1700_sparc-address-warray-bound-warnings.patch
+    ./6.1/gentoo-patches/2000_BT-Check-key-sizes-only-if-Secure-Simple-Pairing-enabled.patch
+    ./6.1/gentoo-patches/2010_Fix_randomize_layout_crash_in_struct_neigh.patch
+    ./6.1/gentoo-patches/2600_HID-revert-Y900P-fix-ThinkPad-L15-touchpad.patch
+    ./6.1/gentoo-patches/2910_bfp-mark-get-entry-ip-as--maybe-unused.patch
+    ./6.1/gentoo-patches/2920_sign-file-patch-for-libressl.patch
+    ./6.1/gentoo-patches/2950_kbuild-CRC32-1MB-dict-xz-modules.patch
+    ./6.1/gentoo-patches/3000_Support-printing-firmware-info.patch
+    ./6.1/gentoo-patches/4567_distro-Gentoo-Kconfig.patch
+    ./6.1/gentoo-patches/5000_shiftfs-6.1.patch
+    ./6.1/gentoo-patches/5010_enable-cpu-optimizations-universal.patch
+

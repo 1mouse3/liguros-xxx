@@ -1,0 +1,127 @@
+echo DEBIAN_LIST
+    ./debian/patches/debian/gitignore.patch
+echo  Disable features broken by exclusion of upstream files
+    ./debian/patches/debian/dfsg/arch-powerpc-platforms-8xx-ucode-disable.patch
+    ./debian/patches/debian/dfsg/drivers-media-dvb-dvb-usb-af9005-disable.patch
+    ./debian/patches/debian/dfsg/vs6624-disable.patch
+    ./debian/patches/debian/dfsg/drivers-net-appletalk-cops.patch
+    ./debian/patches/debian/dfsg/video-remove-nvidiafb-and-rivafb.patch
+    ./debian/patches/debian/dfsg/documentation-fix-broken-link-to-cipso-draft.patch
+echo  Changes to support package build system
+    ./debian/patches/debian/version.patch
+    ./debian/patches/debian/uname-version-timestamp.patch
+    ./debian/patches/debian/kernelvariables.patch
+    ./debian/patches/debian/ia64-hardcode-arch-script-output.patch
+    ./debian/patches/debian/mips-disable-werror.patch
+    ./debian/patches/debian/mips-boston-disable-its.patch
+    ./debian/patches/debian/mips-ieee754-relaxed.patch
+    ./debian/patches/debian/arch-sh4-fix-uimage-build.patch
+    ./debian/patches/debian/tools-perf-perf-read-vdso-in-libexec.patch
+    ./debian/patches/debian/tools-perf-install-python-bindings.patch
+    ./debian/patches/debian/wireless-add-debian-wireless-regdb-certificates.patch
+    ./debian/patches/debian/export-symbols-needed-by-android-drivers.patch
+    ./debian/patches/debian/android-enable-building-ashmem-and-binder-as-modules.patch
+    ./debian/patches/debian/documentation-drop-sphinx-version-check.patch
+    ./debian/patches/debian/perf-traceevent-support-asciidoctor-for-documentatio.patch
+    ./debian/patches/debian/kbuild-look-for-module.lds-under-arch-directory-too.patch
+    ./debian/patches/debian/kbuild-abort-build-if-subdirs-used.patch
+    ./debian/patches/debian/module-avoid-abi-changes-when-debug-info-is-disabled.patch
+    ./debian/patches/debian/makefile-make-compiler-version-comparison-optional.patch
+echo  Fixes/improvements to firmware loading
+    ./debian/patches/features/all/drivers-media-dvb-usb-af9005-request_firmware.patch
+    ./debian/patches/debian/iwlwifi-do-not-request-unreleased-firmware.patch
+    ./debian/patches/bugfix/all/firmware_class-log-every-success-and-failure.patch
+    ./debian/patches/bugfix/all/firmware-remove-redundant-log-messages-from-drivers.patch
+    ./debian/patches/bugfix/all/radeon-amdgpu-firmware-is-required-for-drm-and-kms-on-r600-onward.patch
+    ./debian/patches/debian/firmware_class-refer-to-debian-wiki-firmware-page.patch
+    ./debian/patches/bugfix/all/wifi-mt76-do-not-run-mt76_unregister_device-on-unregistered-hw.patch
+echo  Change some defaults for security reasons
+    ./debian/patches/debian/af_802154-Disable-auto-loading-as-mitigation-against.patch
+    ./debian/patches/debian/rds-Disable-auto-loading-as-mitigation-against-local.patch
+    ./debian/patches/debian/dccp-disable-auto-loading-as-mitigation-against-local-exploits.patch
+    ./debian/patches/debian/hamradio-disable-auto-loading-as-mitigation-against-local-exploits.patch
+    ./debian/patches/debian/fs-enable-link-security-restrictions-by-default.patch
+echo  Set various features runtime-disabled by default
+    ./debian/patches/debian/sched-autogroup-disabled.patch
+    ./debian/patches/debian/yama-disable-by-default.patch
+    ./debian/patches/debian/add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by-default.patch
+    ./debian/patches/features/all/security-perf-allow-further-restriction-of-perf_event_open.patch
+    ./debian/patches/features/x86/intel-iommu-add-option-to-exclude-integrated-gpu-only.patch
+    ./debian/patches/features/x86/intel-iommu-add-kconfig-option-to-exclude-igpu-by-default.patch
+echo  Disable autoloading/probing of various drivers by default
+    ./debian/patches/debian/cdc_ncm-cdc_mbim-use-ncm-by-default.patch
+    ./debian/patches/debian/snd-pcsp-disable-autoload.patch
+    ./debian/patches/bugfix/x86/viafb-autoload-on-olpc-xo1.5-only.patch
+    ./debian/patches/debian/fjes-disable-autoload.patch
+echo  Taint if dangerous features are used
+    ./debian/patches/debian/fanotify-taint-on-use-of-fanotify_access_permissions.patch
+    ./debian/patches/debian/btrfs-warn-about-raid5-6-being-experimental-at-mount.patch
+echo  Arch bug fixes
+    ./debian/patches/bugfix/arm/arm-dts-kirkwood-fix-sata-pinmux-ing-for-ts419.patch
+    ./debian/patches/bugfix/x86/perf-tools-fix-unwind-build-on-i386.patch
+    ./debian/patches/bugfix/sh/sh-boot-do-not-use-hyphen-in-exported-variable-name.patch
+    ./debian/patches/bugfix/arm/arm-mm-export-__sync_icache_dcache-for-xen-privcmd.patch
+    ./debian/patches/bugfix/powerpc/powerpc-boot-fix-missing-crc32poly.h-when-building-with-kernel_xz.patch
+    ./debian/patches/bugfix/arm64/arm64-acpi-Add-fixup-for-HPE-m400-quirks.patch
+    ./debian/patches/bugfix/alpha/alpha-fix-missing-symbol-versions-for-str-n-cat-cpy.patch
+echo  Arch features
+    ./debian/patches/features/arm64/dt-bindings-rockchip-Add-Hardkernel-ODROID-M1-board.patch
+    ./debian/patches/features/arm64/arm64-dts-rockchip-Add-Hardkernel-ODROID-M1-board.patch
+    ./debian/patches/features/arm64/arm64-dts-rockchip-add-thermal-support-to-ODROID-M1.patch
+    ./debian/patches/features/arm64/arm64-dts-rockchip-Add-NOR-flash-to-ODROID-M1.patch
+    ./debian/patches/features/arm64/arm64-dts-rockchip-Add-analog-audio-on-ODROID-M1.patch
+    ./debian/patches/features/arm64/arm64-dts-rockchip-Enable-vop2-and-hdmi-tx-on-ODROID.patch
+    ./debian/patches/features/arm64/arm64-dts-rockchip-Enable-HDMI-audio-on-ODROID-M1.patch
+    ./debian/patches/features/arm64/arm64-dts-rockchip-Enable-the-GPU-on-ODROID-M1.patch
+    ./debian/patches/features/arm64/arm64-dts-rockchip-Enable-the-USB-2.0-ports-on-ODROI.patch
+    ./debian/patches/features/arm64/arm64-dts-rockchip-Enable-the-USB-3.0-ports-on-ODROI.patch
+    ./debian/patches/features/arm64/arm64-dts-rockchip-Add-SATA-support-to-ODROID-M1.patch
+    ./debian/patches/features/arm64/arm64-dts-rockchip-Add-PCIEe-v3-nodes-to-ODROID-M1.patch
+    ./debian/patches/features/arm64/arm64-dts-rockchip-Add-IR-receiver-node-to-ODROID-M1.patch
+    ./debian/patches/features/x86/x86-memtest-WARN-if-bad-RAM-found.patch
+    ./debian/patches/features/x86/x86-make-x32-syscall-support-conditional.patch
+echo  Quartz64 bug fixes
+    ./debian/patches/bugfix/arm64/arm64-dts-rockchip-fix-spdif-fe460000-ordering-on-rk.patch
+    ./debian/patches/features/arm64/quartz64/arm64-dts-rockchip-RK356x-Add-I2S2-device-node.patch
+    ./debian/patches/features/arm64/quartz64/arm64-dts-rockchip-Enable-GPU-on-SOQuartz-CM4.patch
+    ./debian/patches/features/arm64/quartz64/arm64-dts-rockchip-Enable-video-output-and-HDMI-on-S.patch
+    ./debian/patches/features/arm64/quartz64/arm64-dts-rockchip-Enable-HDMI-sound-on-SOQuartz.patch
+    ./debian/patches/features/arm64/quartz64/arm64-dts-rockchip-Enable-PCIe-2-on-SOQuartz-CM4IO.patch
+    ./debian/patches/features/arm64/quartz64/dt-bindings-arm-rockchip-Add-SOQuartz-Blade.patch
+    ./debian/patches/features/arm64/quartz64/arm64-dts-rockchip-Add-SOQuartz-blade-board.patch
+    ./debian/patches/features/arm64/quartz64/dt-bindings-arm-rockchip-Add-SOQuartz-Model-A.patch
+    ./debian/patches/features/arm64/quartz64/arm64-dts-rockchip-Add-SOQuartz-Model-A-baseboard.patch
+echo  Miscellaneous bug fixes
+    ./debian/patches/bugfix/all/disable-some-marvell-phys.patch
+    ./debian/patches/bugfix/all/fs-add-module_softdep-declarations-for-hard-coded-cr.patch
+echo  Miscellaneous features
+echo  Lockdown missing pieces
+    ./debian/patches/features/all/lockdown/efi-add-an-efi_secure_boot-flag-to-indicate-secure-b.patch
+    ./debian/patches/features/all/lockdown/efi-lock-down-the-kernel-if-booted-in-secure-boot-mo.patch
+    ./debian/patches/features/all/lockdown/mtd-disable-slram-and-phram-when-locked-down.patch
+    ./debian/patches/features/all/lockdown/arm64-add-kernel-config-option-to-lock-down-when.patch
+echo  Improve integrity platform keyring for kernel modules verification
+    ./debian/patches/features/all/db-mok-keyring/0003-MODSIGN-checking-the-blacklisted-hash-before-loading-a-kernel-module.patch
+    ./debian/patches/features/all/db-mok-keyring/KEYS-Make-use-of-platform-keyring-for-module-signature.patch
+    ./debian/patches/features/all/db-mok-keyring/trust-machine-keyring-by-default.patch
+echo  Security fixes
+    ./debian/patches/debian/i386-686-pae-pci-set-pci-nobios-by-default.patch
+    ./debian/patches/debian/ntfs-mark-it-as-broken.patch
+    ./debian/patches/bugfix/all/netfilter-nf_tables-deactivate-anonymous-set-from-pr.patch
+echo  Fix exported symbol versions
+    ./debian/patches/bugfix/all/module-disable-matching-missing-version-crc.patch
+echo  Tools bug fixes
+    ./debian/patches/bugfix/all/usbip-document-tcp-wrappers.patch
+    ./debian/patches/bugfix/all/kbuild-fix-recordmcount-dependency.patch
+    ./debian/patches/bugfix/all/tools-perf-man-date.patch
+    ./debian/patches/bugfix/all/tools-perf-remove-shebangs.patch
+    ./debian/patches/bugfix/x86/revert-perf-build-fix-libunwind-feature-detection-on.patch
+    ./debian/patches/bugfix/all/tools-build-remove-bpf-run-time-check-at-build-time.patch
+    ./debian/patches/bugfix/all/cpupower-bump-soname-version.patch
+    ./debian/patches/bugfix/all/cpupower-fix-checks-for-cpu-existence.patch
+    ./debian/patches/bugfix/all/tools-perf-pmu-events-fix-reproducibility.patch
+    ./debian/patches/bugfix/all/libapi-define-_fortify_source-as-2-not-empty.patch
+    ./debian/patches/bugfix/all/tools-perf-fix-missing-ldflags-for-some-programs.patch
+echo  debian-installer fixes
+    ./debian/patches/bugfix/powerpc/fbdev-offb-Update-expected-device-name.patch
+echo  ABI maintenance

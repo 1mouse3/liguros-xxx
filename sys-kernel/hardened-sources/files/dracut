@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# Scrip to run dracut outside of the ebuild if fails to get a bootable system
+#
+        dracut \
+        -v \
+        --compress \
+        --zstd \
+        --stdlog=5 \
+        --force \
+        --kver 6.1.124-hardened1 \
+        --local \
+        --fwdir /lib/firmware \
+        --early-microcode \
+        --libdirs "/lib64 /lib /usr/lib /usr/lib64" \
+        --add-fstab /etc/fstab \
+        --fstab \
+        --lvmconf \
+        /boot/initramfs-6.1.124-hardened1.img 6.1.124-hardened1 || die ">>>Dracut: Building initramfs failed"
+

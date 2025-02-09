@@ -15,7 +15,7 @@ SLOT=$(ver_cut 1-2)
 
 RESTRICT="binchecks strip mirror"
 
-IUSE="binary btrfs custom-cflags debug dtrace dmraid ec2 efi efistub +firmware +hardened iscsi initramfs libressl luks lvm makeconfig mdadm mcelog +microcode multipath NetworkManager nfs nbd plymouth savedconfig selinux openssl +sign-modules secureboot symlink systemd qemu wireguard xen zfs"
+IUSE="backup binary btrfs clang custom-cflags debug dtrace dmraid ec2 efi efistub +firmware +hardened iscsi initramfs initramfs13  libressl luks lvm makeconfig  mdadm mcelog +microcode multipath NetworkManager nfs nbd plymouth +savedconfig selinux openssl +sign-modules secureboot symlink systemd qemu wireguard xen zfs tree"
 
 REQUIRED_USE="hardened"
 
@@ -51,6 +51,7 @@ BDEPEND="
 DEPEND="
 	net-misc/dhcp[client]
 	binary? (
+                sys-kernel/dracut
                 sys-kernel/installkernel[dracut]
 		dev-util/pahole
 		sys-fs/squashfs-tools
@@ -132,10 +133,13 @@ RDEPEND="
 "
 
 # dracut wants this for a compact libc -- elibc_musl? ( sys-libs/fts-standalone )
-
-DEB_PV_BASE=${PV/_*/} #5.8.7
-DEB_EXTRAVERSION=${PV/*_p/-} #-1
-EXTRAVERSION=${PV/*_/_} #_p1
+## this is hard set for 9999 testing ebuild
+DEB_PV_BASE=6.1.124
+DEB_PV_BASE=-1
+EXTRAVERSION=_p1
+#DEB_PV_BASE=${PV/_*/} #5.8.7
+#DEB_EXTRAVERSION=${PV/*_p/-} #-1
+#EXTRAVERSION=${PV/*_/_} #_p1
 
 TEMP_EXTRA_VERSION="debian"
 
@@ -215,14 +219,16 @@ get_certs_dir() {
 pkg_pretend() {
 	# Ensure we have enough disk space to compile
 	if use binary ; then
-		CHECKREQS_DISK_BUILD="5G"
+		CHECKREQS_DISK_BUILD="10G"
 		check-reqs_pkg_setup
 	fi
 }
 
 pkg_setup() {
    if use binary ; then
-	## this set a reference call for other phases to use for emake
+        ## This all was strun about the ebuild and only small bits given to phases
+        ## So this all has been reduced to what is needed and put here
+        ## This all is now a reference call for other phases to use
         ENV_SETUP_MAKECONF()
         {
 	unset ARCH; unset LDFLAGS #will interfere with Makefile if set
@@ -278,6 +284,13 @@ src_unpack() {
 
 	cp -ar /usr/src/linux-6.1.67-gentoo/drivers ${S}/ || die "failed to copy drivers"
    fi
+   if use backup; then
+        ## this tar is of a past run of the "binary" flag's "${WORKDIR}", so can pick backup to try again at "initramfs" flag
+        cd ${PORTAGE_BUILDDIR}
+        tar -xvf ${PORTAGE_BUILDDIR}/files/work_linux_${DEB_PV}.tar.xz
+        mv /var/tmp/portage/sys-kernel/hardened-sources-6.1.124_p1-r1/var/tmp/portage/sys-kernel/hardened-sources-6.1.124_p1-r1/work/ /var/tmp/portage/sys-kernel/hardened-sources-6.1.124_p1-r1/
+   fi
+
 }
 
 src_prepare() {
@@ -294,7 +307,8 @@ src_prepare() {
 
 	### PATCHES ###
 
-        # copy the debian patches into the kernel sources work directory (config-extract and graphene patches requires this).
+        ## copy the debian patches into the kernel sources work directory (config-extract and graphene patches requires this).
+        ## there is no need to punt the debian uefi certification and I put it where needs to be for future copy
 
 	cp -ra ${WORKDIR}/debian/ ${S}/debian
 	cp -ra ${WORKDIR}/${SLOT}/ ${S}/${SLOT}
@@ -305,30 +319,33 @@ src_prepare() {
 
         cd ${S}
 
-	## for the patches to get ran
+        ## the bloat running these patch in a circle made this ebuild a mess, so I reduced them down to a single line
+        ## the patch file list that was dumped into this ebuild and could be done better by moving it to a manifest file
+        ## so all the patch files are now in a manifest list to clean up this ebuild 
 	if use hardened; then
 	einfo "Applying Graphene patches ..."
-	for LIST_A in $( grep ".patch" ${GRAPHENE_LIST}); do eapply ${LIST_A}; done || die "echo failed"
+	        for LIST_A in $( grep ".patch" ${GRAPHENE_LIST}); do eapply ${LIST_A}; done || die "echo failed"
 
 	sleep 5 &&
 
 	einfo "Applying Debian kernel patches ..."
-        for LIST_B in $( grep ".patch" ${DEBIAN_LIST}); do eapply ${LIST_B}; done|| die "echo failed"
+                for LIST_B in $( grep ".patch" ${DEBIAN_LIST}); do eapply ${LIST_B}; done|| die "echo failed"
 	fi
 
 	sleep 5 &&
 
 	einfo "Applying Gentoo Linux patches ..."
-        for LIST_C in $( grep ".patch" ${GENTOO_LIST}); do eapply ${LIST_C}; done|| die "echo failed"
+                for LIST_C in $( grep ".patch" ${GENTOO_LIST}); do eapply ${LIST_C}; done|| die "echo failed"
 
 	sleep 5 &&
 
-	 if use dtrace; then
+	if use dtrace; then
 	einfo "Applying Dtrace patches ..."
-        for LIST_D in $( grep ".patch" ${DTRACE_LIST}); do eapply ${LIST_D}; done|| die "echo failed"
+                for LIST_D in $( grep ".patch" ${DTRACE_LIST}); do eapply ${LIST_D}; done|| die "echo failed"
 	fi
 
-	## this is the makeconfig option to make a .config but can all get one savedconfig
+#	rm -r ${WORKDIR}/${SLOT}
+
 	if use makeconfig; then
 	# append EXTRAVERSION to the kernel sources Makefile
 	sed -i -e "s:^\(EXTRAVERSION =\).*:\1 ${MODULE_EXT}:" Makefile || die "failed to append EXTRAVERSION to kernel Makefile"
@@ -511,14 +528,29 @@ src_test() {
 }
 
 src_configure() {
+	## @pf4public's sys-kernel/linux-image gave a good example of syntex to fix the flacky emakes
+	## there was order issues, incorrect destination of tree and incomplete amount of calls
+	## this left a build that would give what seems like a full build sometimes and only sometimes
+	## so thanks for a working example to be able to fix this ebuilds issues
+	## portage wants the build to be done in ${WORKDIR}/build and no reason to fight it
+	## running that in a circle will cause things to not be put in the right directory
+        ## how this was with "emake ${MAKECONF[@]} COMMAND" was find but a direcotry was unneeded to be called
         unset KBUILD_OUTPUT
    if use binary ; then
         ENV_SETUP_MAKECONF
-	## this is the savedconfig option to retreive a .config but can all make one makeconfig
+        if use initramfs; then
+        echo "####################################################################################"
+        echo "#    You need dracut.conf in /etc/dracut.conf.d/ for the initramfs flag to work    #"
+        echo "# Using the tree flag with USE '-binary -initramfs', will put one in place for you #"
+        echo "####################################################################################"
+        ## need a kill option if this dose not exist
+        fi
         if use savedconfig; then
-	echo "##############################################################################################################"
-	echo "# You need .config in /etc/portage/savedconfig/sys-kernel/hardened-sources/ for the savedconfig flag to work #"
-	echo "##############################################################################################################"
+        echo "##############################################################################################################"
+        echo "# You need .config in /etc/portage/savedconfig/sys-kernel/hardened-sources/ for the savedconfig flag to work #"
+        echo "#             Using the tree flag with USE '-binary -initramfs', will put one in place for you               #"
+        echo "##############################################################################################################"
+        ## need a kill option if this dose not exist
 	rm .config
         restore_config .config
                 if [ ! -f .config ]; then
@@ -539,6 +571,8 @@ src_configure() {
                 export DO_I_HAVE_MODULES=true
         fi
    fi
+	echo "${EROOT}"
+        dir ${EROOT} || die
 }
 
 src_compile() {
@@ -547,10 +581,12 @@ src_compile() {
         ENV_SETUP_MAKECONF
 	emake ${MAKECONF[@]} bzImage
         if ${DO_I_HAVE_MODULES}; then
-	        emake ${MAKECONF[@]} modules_prepare modules || die "modules_prepare failed" 
+	        emake ${MAKECONF[@]} modules_prepare modules || die "modules_prepare failed"
 	fi
         emake ${MAKECONF[@]} all || die "kernel build failed"
    fi
+        echo "${EROOT}"
+        dir ${EROOT} || die
 }
 
 src_install() {
@@ -559,6 +595,21 @@ src_install() {
         ENV_SETUP_MAKECONF
 	debug-print-function ${FUNCNAME} ${@}
 
+	# TODO: Change to SANDBOX_WRITE=".." for installkernel writes
+	#### "DONT:" Disable sandbox, that is a sandbox violation
+	#### "export SANDBOX_ON=0"
+
+        ## "DONT:" run these past this point, it was post ran in "src_prepare" and erases the compile made incuding vmlinux.
+        ## make distclean
+        ## make mrproper
+        ## make clean
+
+        ## so far everthing has been made in "${S}" and would have to think on if there is a batter way to set all this up more orginized
+	## There is still loose ends that need put in place that where causing fault
+	## "${D}" is the image directory and is where the mirror for the file system is built
+	## "${EROOT}" is base of build tree and "${ROOT}" is a sandbox violation
+	## Using "${EROOT}" past src_instal, is ="${ROOT}" thats also a sandbox violation
+	## This is a custom kernel and proper note needs made as to where things are getting made so that the build will not be incomplete
         mkdir -p ${D}/boot/EFI/Gentoo || die
         mkdir -p ${WORKDIR}/dracut
 
@@ -583,8 +634,23 @@ src_install() {
                 emake ${MAKECONF[@]} ${TARGETS[@]} INSTALL_MOD_PATH=${D} INSTALL_PATH=${D}/boot/EFI/Gentoo;
         fi
 
+        ## some things might see these as enqual, but there is a lot in linux that wont
+        ## say the nano editor, it highlights one these different since is proper and is know valid
+        ## unknow commands will be plain, where valid ones are another color and special ones to gnu get there own
+        ## both these are not proper in righting code, only the first since in all caps and in brackets
+        ## this "$eroot". is asking for something to get lost in the code and is flacky to weather it will be respected
+        ## there is also no reason to echo it like "${EROOT}", since will ge lost in the code with whats echoed and is uneeded
+        ## in nano a proper editor for this code, will give distincten of syntex items that are proper and should be let to do so
+	echo "${EROOT}"
+	dir ${EROOT} || die
+	dir ${eroot} || die
+        ###################
+
         ## This makes the /lib/modules/${KERNELTAGS}/build tree in ${D}
         installkernel ${KERNELTAGS} ${S}/arch/x86/boot/bzImage ${S}/System.map ${D}/boot/EFI/Gentoo
+
+        ## will need to mess with "installkernel" since did not put this in the right place
+        cp ${S}/arch/x86/boot/bzImage ${D}/boot/EFI/Gentoo
 
         ## This take the above tree and generate modules.dep and map files, in the ${KERNELTAGS} folder.
         if [[ -d ${USR_SRC_BUILD} ]]; then
@@ -595,16 +661,117 @@ src_install() {
                 # ${CERTSDIR_NEW} defined previously in this function.
                 ${S}/scripts/sign-file sha512 ${CERTSDIR}/signing_key.pem ${CERTSDIR}/signing_key.x509 $x || die
             done
+            ## thit is uneeded since installkernel symlinks ${S} to ${USR_SRC_BUILD}
+            # install the sign-file executable for future use.
+            # exeinto ${CLEAN_LIB}/build/scripts
+            # doexe ${WORKDIR}/${KERNELTAGS}/source/scripts/sign-file
         fi
 
+        ## this all is setting stuff in place, "source" needs to be the source for initramfs and the others are for backup
 	rm -r ${LIB_MODULES}/source
 	mkdir -p ${LIB_MODULES}/source
+        mkdir -p ${WORKDIR}/${KERNELTAGS}/{boot,kernel}
+        rsync -ar ${LIB_MODULES}/kernel/ ${WORKDIR}/${KERNELTAGS}/kernel
+        cp ${LIB_MODULES}/m* ${WORKDIR}/${KERNELTAGS}
 	rsync -ar ${WORKDIR}/${KERNELTAGS}/source/  ${LIB_MODULES}/source
-        ## Now make backup of /usr/src/linux
+        rsync -ar ${D}/boot/ ${WORKDIR}/${KERNELTAGS}/boot
+
+        ## now make tar of a past run of the "binary" flag's "${WORKDIR}", so can pick "backup" to try again at "initramfs" flag
 #       mkdir -p ${USR_SRC_BUILD_EXT} || die
         mkdir -p ${D_FILESDIR} || die
+        cd ../../
+        tar -cJf ${D_FILESDIR}/work_linux_${DEB_PV}.tar.xz ./work
+        cd ${S}
+
+        ## this hackery with a binbash scrip is to run dracut in the live enviorment, to test dracut for function
+        ## to run this the build need to run in full, so run without the initramfs flag
+        ## to run it use "$ cd /lib/modules/${KERNELTAGS}" followed by "$ ./dracut"
+        ## this will give quick testing of what variables dracut will accept
+	cp  ${FILESDIR}/dracut ${LIB_MODULES}/
+        chmod 755 ${LIB_MODULES}/dracut
    fi
+   if use backup; then
+        ## this is more hackery to test dracut in the ebuild quick, give this build "USE" of "-binary backup initramfs" to do so
+        ## this also needs a full run for parts to be put in place, Im not going to say other wise with more hackery
+        mkdir -p ${D}/boot/EFI/Gentoo
+	cp /boot/EFI/Gentoo/*hardened1 ${D}/boot/EFI/Gentoo
+	cp /boot/EFI/Gentoo/*.img ${D}/boot/EFI/Gentoo
+        mkdir -p ${CERTSDIR_NEW}
+        mkdir -p ${USR_SRC_BUILD}
+        rsync -ar ${S}/certs/ ${CERTSDIR_NEW} || die "cd failed 4"
+        mkdir -p ${LIB_MODULES}/{build,source,kernel}
+        rsync -ar ${WORKDIR}/${KERNELTAGS}/ ${LIB_MODULES}
+        mkdir -p ${D}/usr/src/linux-${KERNELTAG}
+        rsync -ar ${S}/ ${D}/usr/src/linux-${KERNELTAG}
+        ln -sf ${D}/usr/src/linux-${KERNELTAG} ${USR_SRC_BUILD}
+        ln -sf ${D}/usr/src/linux-${KERNELTAG} ${D}/usr/src/linux
+   fi
+
+   if use tree; then
+        rsync -ar ${FILESDIR}/tree/ ${D}
+   fi
+
    if use initramfs; then
+        ## dracut will make /usr/src/linux from /lib/modules/${KERNELTAGS}/build, there is no need for hackery to do what installkernel and dracut do
+        ## this is all I could get dracut to run and in this order for some reason, it dose not respect the compreshion type I give it the way it was
+        einfo "Config is needed in "
+        einfo ">>> Dracut: building initramfs"
+        cd ${USR_SRC_BUILD}
+        dracut \
+        -v \
+        --compress=zstd \
+        --stdlog=5 \
+        --force \
+        --kver 6.1.124-hardened1 \
+        --kmoddir ${LIB_MODULES} \
+        --fwdir /lib/firmware \
+        --early-microcode \
+        --libdirs "/lib64 /lib /usr/lib /usr/lib64" \
+        --add-fstab /etc/fstab \
+        --fstab \
+        --lvmconf \
+        ${D}/boot/EFI/Gentoo/initramfs-${KERNELTAGS}.img ${KERNELTAGS} || die ">>>Dracut: Building initramfs failed"
+   fi
+
+   if use initramfs13; then
+	# NOTE: WIP and not well tested yet.
+	# The initramfs will be configurable via USE, i.e.
+	# USE=zfs will pass '--zfs' to Dracut
+	# USE=-systemd will pass '--omit dracut-systemd systemd systemd-networkd systemd-initrd' to exclude these (Dracut) modules from the initramfs.
+	## this all is too much to ask portage to do in one go, dracut keep taking a dump and would stop accepting commands
+        #
+	# NOTE 2: this will create a fairly.... minimal, and modular initramfs. It has been tested with things with ZFS and LUKS, and 'works'.
+	# Things like network support have not been tested (I am currently unsure how well this works with Gentoo Linux based systems),
+        # and may end up requiring networkmanager for decent support (this really needs further research).
+        ## " network-legacy " works but " network-manager " needs " systemd " to work, "NOTE" the trailing spaces that are needed for add and omit
+        ## " base rootfs-block udev-rules shutdown " had to be put in the omit list to get openrc to work on a gentoo backup
+        ## udev dose not have time to symlink all items to "/dev/disk/*" and will cause a crash to dracut shell on boot
+        ## use "PARTUUID" instead of "UUID" in "/etc/fstab", to get it to boot  and had to manualy edit "grub.cfg" to get gentoo to use this kernel
+        ## dont know what is up with dracut on my end, but kept taking a dump after so many variables and could not get these all to run with out failer
+        $(usex btrfs "-a btrfs" "-o btrfs") \
+        $(usex dmraid "-a dmraid -a dm" "-o dmraid") \
+        $(usex hardened "-o resume" "-a resume") \
+        $(usex iscsi "-a iscsi" "-o iscsi") \
+        $(usex lvm "-a lvm -a dm" "-o lvm") \
+        $(usex lvm "--lvmconf" "--nolvmconf") \
+        $(usex luks "-a crypt" "-o crypt") \
+        $(usex mdadm "--mdadmconf" "--nomdadmconf") \
+        $(usex mdadm "-a mdraid" "-o mdraid") \
+        $(usex microcode "--early-microcode" "--no-early-microcode") \
+        $(usex multipath "-a multipath -a dm" "-o multipath") \
+        $(usex nbd "-a nbd" "-o nbd") \
+        $(usex nfs "-a nfs" "-o nfs") \
+        $(usex plymouth "-a plymouth" "-o plymouth") \
+        $(usex selinux "-a selinux" "-o selinux") \
+        $(usex systemd "-a systemd -a systemd-initrd -a systemd-networkd" "-o systemd -o systemd-initrd -o systemd-networkd") \
+        $(usex zfs "-a zfs" "-o zfs") \
+        $(usex NetworkManager) \
+        ## these as well gave issue but I reduced them in full to a config file, to solve the issues given
+        ## the above might work in conjunction with the config file, but not doing any more testing of dracut since got a working kernel
+        ## dracut needs " systemd " for " uefi-stub ", so dracut will be removed and replaced by mkinitramfs instead to get efi-stub
+        --add "base fs-lib i18n kernel-modules modsign NetworkManager qemu qemu-net rootfs-block shutdown terminfo uefi-lib udev-rules usrmount" \
+        --omit "memstrack biosdevname bootchart busybox caps convertfs dash debug dmsquash-live dmsquash-live-ntfs fcoe fcoe-uefi fstab-sys gensplash ifcfg img-lib livenet network-legacy mksh rpmversion securityfs ssh-client stratis syslog url-lib" \
+
 
         # if USE=symlink...
 	# Dracut makes this dir and this command shound not go before
@@ -613,15 +780,16 @@ src_install() {
         fi
 
     fi
-        mkdir -p ${D}/var/db/repos/liguros-xxx/sys-kernel/hardened-sources/files/
-	cp -a /var/tmp/portage/sys-kernel/hardened-sources-6.1.124_p1-r1/temp/build.log ${D}/var/db/repos/liguros-xxx/sys-kernel/hardened-sources/files/
+        mkdir -p ${D_FILESDIR}
+	cp -a ${PORTAGE_BUILDDIR}/temp/build.log ${D_FILESDIR}
 
-        ## at this point the image tree should have these if everthing work
-        ## /lib/modules/${KERNELTAGS}/ should have the modules
-        ## /lib/modules/${KERNELTAGS}/build should have the build tree
-        ## /lib/modules/${KERNELTAGS}/source should have the source tree
-        ## /etc/kernel/certs/${KERNELTAGS} should have the certification made
-        ## /boot or /boot/EFI/gentoo should have boot files, need a if else check to give these as option choice based on efi
+        ## at this point the image tree should have these if everthing worked
+        ## "/lib/modules/${KERNELTAGS}/" should have the modules
+        ## "/lib/modules/${KERNELTAGS}/build" should have the build tree
+        ## "/lib/modules/${KERNELTAGS}/source" should have the source tree
+        ## "/lib/modules/${KERNELTAGS}/kernel" should have the kernel tree
+        ## "/etc/kernel/certs/${KERNELTAGS}" should have the certification made
+        ## "/boot" or "/boot/EFI/Gentoo" should have boot files, need a if else check to give these as option choice based on efi
         ## uncheek this this to stop the build so verification can be had that all is done
 #       cd /kill/me || die "It stops"
 }
@@ -661,7 +829,7 @@ pkg_postinst() {
         ewarn ""
         ewarn "    Where $SWAP is the swap device used by hibernate software of your choice."
         ewarn""
-        ewarn "    Please consult "man 7 dracut.kernel" for additional kernel arguments."
+        ewarn "    Please consult 'man 7 dracut.kernel' for additional kernel arguments."
    fi
 
 	# warn about the issues with running a hardened kernel

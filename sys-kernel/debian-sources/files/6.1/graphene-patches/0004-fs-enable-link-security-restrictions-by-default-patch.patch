@@ -1,0 +1,33 @@
+--- a/debian/patches/debian/fs-enable-link-security-restrictions-by-default.patch	2025-01-14 18:15:36.203579847 -0000
++++ b/debian/patches/debian/fs-enable-link-security-restrictions-by-default.patch	2025-01-15 08:34:16.057156128 -0000
+@@ -7,16 +7,17 @@ Forwarded: not-needed
+ This reverts commit 561ec64ae67ef25cac8d72bb9c4bfc955edfd415
+ ('VFS: don't do protected {sym,hard}links by default').
+ 
+---- a/fs/namei.c
+-+++ b/fs/namei.c
+-@@ -1020,8 +1020,8 @@ static inline void put_link(struct namei
+- 		path_put(&last->link);
+- }
+- 
+--static int sysctl_protected_symlinks __read_mostly;
+--static int sysctl_protected_hardlinks __read_mostly;
+-+static int sysctl_protected_symlinks __read_mostly = 1;
+-+static int sysctl_protected_hardlinks __read_mostly = 1;
+- static int sysctl_protected_fifos __read_mostly;
+- static int sysctl_protected_regular __read_mostly;
+- 
++---
++
++--- a/drivers/net/wireless/mediatek/mt76/mac80211.c     2025-01-14 07:21:38.223397384 -0000
+++++ b/drivers/net/wireless/mediatek/mt76/mac80211.c     2025-01-14 22:27:11.640317226 -0000
++@@ -37,7 +37,7 @@ static const struct ieee80211_channel mt
++ 	CHAN2G(7, 2442),
++ 	CHAN2G(8, 2447),
++ 	CHAN2G(9, 2452),
++-	CHAN2G(10, 2457),
+++		CHAN2G(10, 2457),
++ 	CHAN2G(11, 2462),
++ 	CHAN2G(12, 2467),
++ 	CHAN2G(13, 2472),
++--

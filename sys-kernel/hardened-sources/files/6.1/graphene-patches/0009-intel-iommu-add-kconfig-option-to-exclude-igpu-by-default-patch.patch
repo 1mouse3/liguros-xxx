@@ -1,0 +1,22 @@
+--- a/debian/patches/features/x86/intel-iommu-add-kconfig-option-to-exclude-igpu-by-default.patch	2025-01-14 23:04:45.816994645 -0000
++++ b/debian/patches/features/x86/intel-iommu-add-kconfig-option-to-exclude-igpu-by-default.patch	2025-01-15 01:13:13.593698202 -0000
+@@ -15,6 +15,7 @@ Signed-off-by: Ben Hutchings <ben@decade
+ ---
+ --- a/drivers/iommu/intel/Kconfig
+ +++ b/drivers/iommu/intel/Kconfig
++
+ @@ -58,14 +58,25 @@ config INTEL_IOMMU_SVM
+  	  to access DMA resources through process address space by
+  	  means of a Process Address Space ID (PASID).
+@@ -49,9 +50,9 @@ Signed-off-by: Ben Hutchings <ben@decade
+  	depends on BROKEN && X86
+ --- a/drivers/iommu/intel/iommu.c
+ +++ b/drivers/iommu/intel/iommu.c
+-@@ -289,14 +289,14 @@ static LIST_HEAD(dmar_satc_units);
++@@ -283,14 +286,14 @@ static LIST_HEAD(dmar_satc_units);
+  
+- static void dmar_remove_one_dev_info(struct device *dev);
++ static void device_block_translation(struct device *dev);
+  
+ -int dmar_disabled = !IS_ENABLED(CONFIG_INTEL_IOMMU_DEFAULT_ON);
+ +int dmar_disabled = IS_ENABLED(CONFIG_INTEL_IOMMU_DEFAULT_OFF);

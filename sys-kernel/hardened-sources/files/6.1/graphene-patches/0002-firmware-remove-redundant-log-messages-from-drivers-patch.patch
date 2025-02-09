@@ -1,0 +1,22 @@
+--- a/debian/patches/bugfix/all/firmware-remove-redundant-log-messages-from-drivers.patch	2025-01-14 18:30:41.490250680 -0000
++++ b/debian/patchea/bugfix/all/firmware-remove-redundant-log-messages-from-drivers.patch	2025-01-14 21:56:04.360308467 -0000
+@@ -46,7 +46,7 @@ Index: linux/drivers/bluetooth/ath3k.c
+ ===================================================================
+ --- linux.orig/drivers/bluetooth/ath3k.c
+ +++ linux/drivers/bluetooth/ath3k.c
+-@@ -381,10 +381,8 @@ static int ath3k_load_patch(struct usb_d
++@@ -379,10 +381,8 @@ static int ath3k_load_patch(struct usb_d
+  		 le32_to_cpu(fw_version.rom_version));
+  
+  	ret = request_firmware(&firmware, filename, &udev->dev);
+@@ -58,8 +58,8 @@ Index: linux/drivers/bluetooth/ath3k.c
+  
+  	pt_rom_version = get_unaligned_le32(firmware->data +
+  					    firmware->size - 8);
+-@@ -444,10 +442,8 @@ static int ath3k_load_syscfg(struct usb_
+- 		le32_to_cpu(fw_version.rom_version), clk_value, ".dfu");
++@@ -441,10 +442,8 @@ static int ath3k_load_syscfg(struct usb_
++ 		 le32_to_cpu(fw_version.rom_version), clk_value, ".dfu");
+  
+  	ret = request_firmware(&firmware, filename, &udev->dev);
+ -	if (ret < 0) {

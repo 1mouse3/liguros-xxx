@@ -1,0 +1,52 @@
+--- a/debian/patches/features/all/security-perf-allow-further-restriction-of-perf_event_open.patch	2025-01-14 17:21:03.170231416 -0000
++++ b/debian/patches/features/all/security-perf-allow-further-restriction-of-perf_event_open.patch	2025-01-14 17:46:19.080238372 -0000
+@@ -36,21 +36,7 @@ Signed-off-by: Ben Hutchings <ben@decade
+  
+ --- a/kernel/events/core.c
+ +++ b/kernel/events/core.c
+-@@ -415,8 +415,13 @@ static struct kmem_cache *perf_event_cac
+-  *   0 - disallow raw tracepoint access for unpriv
+-  *   1 - disallow cpu events for unpriv
+-  *   2 - disallow kernel profiling for unpriv
+-+ *   3 - disallow all unpriv perf event use
+-  */
+-+#ifdef CONFIG_SECURITY_PERF_EVENTS_RESTRICT
+-+int sysctl_perf_event_paranoid __read_mostly = 3;
+-+#else
+- int sysctl_perf_event_paranoid __read_mostly = 2;
+-+#endif
+- 
+- /* Minimum for 512 kiB + 1 user control page */
+- int sysctl_perf_event_mlock __read_mostly = 512 + (PAGE_SIZE / 1024); /* 'free' kiB per user */
+-@@ -12235,6 +12240,9 @@ SYSCALL_DEFINE5(perf_event_open,
++@@ -12359,8 +12240,11 @@ SYSCALL_DEFINE5(perf_event_open,
+  	if (err)
+  		return err;
+  
+@@ -58,23 +44,8 @@ Signed-off-by: Ben Hutchings <ben@decade
+ +		return -EACCES;
+ +
+  	/* Do we allow access to perf_event_open(2) ? */
+- 	err = security_perf_event_open(&attr, PERF_SECURITY_OPEN);
++-	err = perf_allow_open(&attr);
+++	err = security_perf_event_open(&attr, PERF_SECURITY_OPEN);
+  	if (err)
+---- a/security/Kconfig
+-+++ b/security/Kconfig
+-@@ -19,6 +19,15 @@ config SECURITY_DMESG_RESTRICT
+- 
+- 	  If you are unsure how to answer this question, answer N.
++ 		return err;
+  
+-+config SECURITY_PERF_EVENTS_RESTRICT
+-+	bool "Restrict unprivileged use of performance events"
+-+	depends on PERF_EVENTS
+-+	help
+-+	  If you say Y here, the kernel.perf_event_paranoid sysctl
+-+	  will be set to 3 by default, and no unprivileged use of the
+-+	  perf_event_open syscall will be permitted unless it is
+-+	  changed.
+-+
+- config SECURITY
+- 	bool "Enable different security models"
+- 	depends on SYSFS

@@ -1,0 +1,40 @@
+--- a/debian/patches/features/arm64/quartz64/arm64-dts-rockchip-Enable-GPU-on-SOQuartz-CM4.patch	2025-01-14 23:39:42.593671314 -0000
++++ b/debian/patches/features/arm64/quartz64/arm64-dts-rockchip-Enable-GPU-on-SOQuartz-CM4.patch	2025-01-15 08:42:16.397158372 -0000
+@@ -9,25 +9,16 @@ Signed-off-by: Nicolas Frattaroli <fratt
+ Link: https://lore.kernel.org/r/20221112160404.70868-2-frattaroli.nicolas@gmail.com
+ Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+ ---
+- arch/arm64/boot/dts/rockchip/rk3566-soquartz.dtsi | 5 +++++
+- 1 file changed, 5 insertions(+)
+-
+-diff --git a/arch/arm64/boot/dts/rockchip/rk3566-soquartz.dtsi b/arch/arm64/boot/dts/rockchip/rk3566-soquartz.dtsi
+-index 5bcd4be32964..6e99f049501c 100644
+---- a/arch/arm64/boot/dts/rockchip/rk3566-soquartz.dtsi
+-+++ b/arch/arm64/boot/dts/rockchip/rk3566-soquartz.dtsi
+-@@ -143,6 +143,11 @@
+- 	status = "disabled";
+- };
+- 
+-+&gpu {
+-+	mali-supply = <&vdd_gpu>;
+-+	status = "okay";
+-+};
+-+
+- &i2c0 {
+- 	status = "okay";
+- 
+--- 
+-2.39.0
+ 
++--- a/drivers/net/wireless/mediatek/mt76/mac80211.c     2025-01-14 07:21:38.223397384 -0000
+++++ b/drivers/net/wireless/mediatek/mt76/mac80211.c     2025-01-14 22:27:11.640317226 -0000
++@@ -31,7 +31,7 @@ static const struct ieee80211_channel mt
++ 	CHAN2G(1, 2412),
++ 	CHAN2G(2, 2417),
++ 	CHAN2G(3, 2422),
++-	CHAN2G(4, 2427),
+++		CHAN2G(4, 2427),
++ 	CHAN2G(5, 2432),
++ 	CHAN2G(6, 2437),
++ 	CHAN2G(7, 2442),
++--

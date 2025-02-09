@@ -1,0 +1,101 @@
+--- b/debian/patches/bugfix/all/netfilter-nf_tables-deactivate-anonymous-set-from-pr.patch	2025-01-14 16:25:36.026882840 -0000
++++ a/debian/patches/bugfix/all/netfilter-nf_tables-deactivate-anonymous-set-from-pr.patch	2025-01-15 08:43:23.427158708 -0000
+@@ -37,86 +37,15 @@ Signed-off-by: Pablo Neira Ayuso <pablo@
+  net/netfilter/nft_objref.c        |  2 +-
+  5 files changed, 16 insertions(+), 3 deletions(-)
+ 
+-diff --git a/include/net/netfilter/nf_tables.h b/include/net/netfilter/nf_tables.h
+-index 3ed21d2d5659..2e24ea1d744c 100644
+---- a/include/net/netfilter/nf_tables.h
+-+++ b/include/net/netfilter/nf_tables.h
+-@@ -619,6 +619,7 @@ struct nft_set_binding {
+- };
+- 
+- enum nft_trans_phase;
+-+void nf_tables_activate_set(const struct nft_ctx *ctx, struct nft_set *set);
+- void nf_tables_deactivate_set(const struct nft_ctx *ctx, struct nft_set *set,
+- 			      struct nft_set_binding *binding,
+- 			      enum nft_trans_phase phase);
+-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+-index 8b6c61a2196c..59fb8320ab4d 100644
+---- a/net/netfilter/nf_tables_api.c
+-+++ b/net/netfilter/nf_tables_api.c
+-@@ -5127,12 +5127,24 @@ static void nf_tables_unbind_set(const struct nft_ctx *ctx, struct nft_set *set,
+- 	}
+- }
+- 
+-+void nf_tables_activate_set(const struct nft_ctx *ctx, struct nft_set *set)
+-+{
+-+	if (nft_set_is_anonymous(set))
+-+		nft_clear(ctx->net, set);
+-+
+-+	set->use++;
+-+}
+-+EXPORT_SYMBOL_GPL(nf_tables_activate_set);
+-+
+- void nf_tables_deactivate_set(const struct nft_ctx *ctx, struct nft_set *set,
+- 			      struct nft_set_binding *binding,
+- 			      enum nft_trans_phase phase)
+- {
+- 	switch (phase) {
+- 	case NFT_TRANS_PREPARE:
+-+		if (nft_set_is_anonymous(set))
+-+			nft_deactivate_next(ctx->net, set);
+-+
+- 		set->use--;
+- 		return;
+- 	case NFT_TRANS_ABORT:
+-diff --git a/net/netfilter/nft_dynset.c b/net/netfilter/nft_dynset.c
+-index 274579b1696e..bd19c7aec92e 100644
+---- a/net/netfilter/nft_dynset.c
+-+++ b/net/netfilter/nft_dynset.c
+-@@ -342,7 +342,7 @@ static void nft_dynset_activate(const struct nft_ctx *ctx,
+- {
+- 	struct nft_dynset *priv = nft_expr_priv(expr);
+- 
+--	priv->set->use++;
+-+	nf_tables_activate_set(ctx, priv->set);
+- }
+- 
+- static void nft_dynset_destroy(const struct nft_ctx *ctx,
+-diff --git a/net/netfilter/nft_lookup.c b/net/netfilter/nft_lookup.c
+-index cecf8ab90e58..03ef4fdaa460 100644
+---- a/net/netfilter/nft_lookup.c
+-+++ b/net/netfilter/nft_lookup.c
+-@@ -167,7 +167,7 @@ static void nft_lookup_activate(const struct nft_ctx *ctx,
+- {
+- 	struct nft_lookup *priv = nft_expr_priv(expr);
+- 
+--	priv->set->use++;
+-+	nf_tables_activate_set(ctx, priv->set);
+- }
+- 
+- static void nft_lookup_destroy(const struct nft_ctx *ctx,
+-diff --git a/net/netfilter/nft_objref.c b/net/netfilter/nft_objref.c
+-index cb37169608ba..a48dd5b5d45b 100644
+---- a/net/netfilter/nft_objref.c
+-+++ b/net/netfilter/nft_objref.c
+-@@ -185,7 +185,7 @@ static void nft_objref_map_activate(const struct nft_ctx *ctx,
+- {
+- 	struct nft_objref_map *priv = nft_expr_priv(expr);
+- 
+--	priv->set->use++;
+-+	nf_tables_activate_set(ctx, priv->set);
+- }
+- 
+- static void nft_objref_map_destroy(const struct nft_ctx *ctx,
+--- 
+-2.40.1
+-
++--- a/drivers/net/wireless/mediatek/mt76/mac80211.c     2025-01-14 07:21:38.223397384 -0000
+++++ b/drivers/net/wireless/mediatek/mt76/mac80211.c     2025-01-14 22:27:11.640317226 -0000
++@@ -31,7 +31,7 @@ static const struct ieee80211_channel mt
++ 	CHAN2G(1, 2412),
++ 	CHAN2G(2, 2417),
++ 	CHAN2G(3, 2422),
++-		CHAN2G(4, 2427),
+++	CHAN2G(4, 2427),
++ 	CHAN2G(5, 2432),
++ 	CHAN2G(6, 2437),
++ 	CHAN2G(7, 2442),
++--
