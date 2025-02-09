@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://liguros.gitlab.io/dtd/metadata.dtd">
+<pkgmetadata>
+ <maintainer type="project">
+  <email>dev@liguros.net</email>
+  <name>Development</name>
+ </maintainer>
+ <maintainer type="project">
+  <email>base-system@gentoo.org</email>
+  <name>Gentoo Base System</name>
+ </maintainer>
+ <upstream>
+  <remote-id type="cpe">cpe:/a:cryptsetup_project:cryptsetup</remote-id>
+ </upstream>
+ <use>
+  <flag name="argon2">Enable password hashing algorithm from <pkg>app-crypt/argon2</pkg></flag>
+  <flag name="gcrypt">Use <pkg>dev-libs/libgcrypt</pkg> crypto backend</flag>
+  <flag name="kernel">Use kernel crypto backend (mainly for embedded systems)</flag>
+  <flag name="nettle">Use <pkg>dev-libs/nettle</pkg> crypto backend</flag>
+  <flag name="openssl">Use <pkg>dev-libs/openssl</pkg> crypto backend</flag>
+  <flag name="pwquality">Use <pkg>dev-libs/libpwquality</pkg> for password quality checking</flag>
+  <flag name="urandom">Use /dev/urandom instead of /dev/random</flag>
+  <flag name="reencrypt">Build cryptsetup-reencrypt</flag>
+ </use>
+ <origin>ports</origin>
+</pkgmetadata>

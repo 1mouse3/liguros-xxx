@@ -1,0 +1,22 @@
+diff '--color=auto' -urN libudev-zero-1.0.3.orig/Makefile libudev-zero-1.0.3/Makefile
+--- libudev-zero-1.0.3.orig/Makefile	2025-01-27 17:59:49.222645753 +0100
++++ libudev-zero-1.0.3/Makefile	2025-01-27 18:02:31.727756289 +0100
+@@ -19,7 +19,7 @@
+ 	  udev_monitor.o \
+ 	  udev_enumerate.o
+ 
+-all: libudev.so.1 libudev.a
++all: libudev.so.1 libudev.a libudev-zero-helper
+ 
+ .c.o:
+ 	${CC} ${XCFLAGS} -c -o $@ $<
+@@ -30,6 +30,9 @@
+ libudev.so.1: ${OBJ}
+ 	${CC} ${XCFLAGS} -o $@ ${OBJ} ${XLDFLAGS}
+ 
++libudev-zero-helper: contrib/helper.c
++	${CC} ${XCFLAGS} -o $@ contrib/helper.c ${XLDFLAGS}
++
+ libudev.pc: libudev.pc.in
+ 	libdir="${LIBDIR}"; \
+ 	if [ "$${libdir#${PREFIX}}" != "$$libdir" ]; then \

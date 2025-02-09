@@ -1,0 +1,894 @@
+diff '--color=auto' -rup a/FAQ.md b/FAQ.md
+--- a/FAQ.md	2024-06-11 10:33:56.000000000 -0000
++++ b/FAQ.md	2025-01-25 05:59:21.287350073 -0000
+@@ -926,7 +926,7 @@
+ 
+   - Check that "/dev", including "/dev/mapper/control" is there.  If it is
+   missing, you may have a problem with the "/dev" tree itself or you may
+-  have broken udev rules.
++  have broken mdevd rules.
+ 
+   - Check that you have the device mapper and the crypt target in your
+   kernel.  The output of "dmsetup targets" should list a "crypt" target. 
+diff '--color=auto' -rup a/config.h.in b/config.h.in
+--- a/config.h.in	2024-09-02 21:09:42.000000000 -0000
++++ b/config.h.in	2025-01-25 06:10:08.724019782 -0000
+@@ -210,8 +210,8 @@
+ #undef HAVE_DECL_DM_TASK_SECURE_DATA
+ 
+ /* Define to 1 if you have the declaration of
+-   'DM_UDEV_DISABLE_DISK_RULES_FLAG', and to 0 if you don't. */
+-#undef HAVE_DECL_DM_UDEV_DISABLE_DISK_RULES_FLAG
++   'DM_MDEVD_DISABLE_DISK_RULES_FLAG', and to 0 if you don't. */
++#undef HAVE_DECL_DM_MDEVD_DISABLE_DISK_RULES_FLAG
+ 
+ /* Define to 1 if you have the declaration of 'GCRY_CIPHER_MODE_XTS', and to 0
+    if you don't. */
+@@ -557,8 +557,8 @@
+ #endif
+ 
+ 
+-/* Try to use udev synchronisation? */
+-#undef USE_UDEV
++/* Try to use mdevd synchronisation? */
++#undef USE_MDEVD
+ 
+ /* Version number of package */
+ #undef VERSION
+diff '--color=auto' -rup a/configure b/configure
+--- a/configure	2024-09-02 21:09:11.000000000 -0000
++++ b/configure	2025-01-25 06:16:18.860688208 -0000
+@@ -919,7 +919,7 @@ enable_cryptsetup
+ enable_veritysetup
+ enable_integritysetup
+ enable_selinux
+-enable_udev
++enable_mdevd
+ with_crypto_backend
+ enable_kernel_crypto
+ enable_gcrypt_pbkdf2
+@@ -1665,7 +1665,7 @@ Optional Features:
+   --disable-integritysetup
+                           disable integritysetup support
+   --disable-selinux       disable selinux support [default=auto]
+-  --disable-udev          disable udev support
++  --disable-mdevd          disable mdevd support
+   --disable-kernel_crypto disable kernel userspace crypto (no benchmark and
+                           tcrypt)
+ 		  --enable-gcrypt-pbkdf2  force enable internal gcrypt PBKDF2
+@@ -23140,12 +23140,12 @@ esac
+ fi
+ 
+ 
+-# Check whether --enable-udev was given.
+-if test ${enable_udev+y}
++# Check whether --enable-mdevd was given.
++if test ${enable_mdevd+y}
+ then :
+-  enableval=$enable_udev;
++  enableval=$enable_mdevd;
+ else case e in #(
+-  e) enable_udev=yes ;;
++  e) enable_mdevd=yes ;;
+ esac
+ fi
+ 
+@@ -23521,16 +23521,16 @@ esac
+ fi
+ printf "%s\n" "#define HAVE_DECL_DM_DEVICE_GET_TARGET_VERSION $ac_have_decl" >>confdefs.h
+ 
+-ac_fn_check_decl "$LINENO" "DM_UDEV_DISABLE_DISK_RULES_FLAG" "ac_cv_have_decl_DM_UDEV_DISABLE_DISK_RULES_FLAG" "#include <libdevmapper.h>
++ac_fn_check_decl "$LINENO" "DM_MDEVD_DISABLE_DISK_RULES_FLAG" "ac_cv_have_decl_DM_MDEVD_DISABLE_DISK_RULES_FLAG" "#include <libdevmapper.h>
+ " "$ac_c_undeclared_builtin_options" "CFLAGS"
+-if test "x$ac_cv_have_decl_DM_UDEV_DISABLE_DISK_RULES_FLAG" = xyes
++if test "x$ac_cv_have_decl_DM_MDEVD_DISABLE_DISK_RULES_FLAG" = xyes
+ then :
+   ac_have_decl=1
+ else case e in #(
+   e) ac_have_decl=0 ;;
+ esac
+ fi
+-printf "%s\n" "#define HAVE_DECL_DM_UDEV_DISABLE_DISK_RULES_FLAG $ac_have_decl" >>confdefs.h
++printf "%s\n" "#define HAVE_DECL_DM_MDEVD_DISABLE_DISK_RULES_FLAG $ac_have_decl" >>confdefs.h
+ if test $ac_have_decl = 1
+ then :
+   have_cookie=yes
+@@ -23539,13 +23539,13 @@ else case e in #(
+ esac
+ fi
+ 
+-if test "x$enable_udev" = xyes; then
++if test "x$enable_mdevd" = xyes; then
+ 	if test "x$have_cookie" = xno; then
+-		{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: The device-mapper library on your system has no udev support, udev support disabled." >&5
+-printf "%s\n" "$as_me: WARNING: The device-mapper library on your system has no udev support, udev support disabled." >&2;}
++		{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: The device-mapper library on your system has no mdevd support, mdevd support disabled." >&5
++printf "%s\n" "$as_me: WARNING: The device-mapper library on your system has no mdevd support, mdevd support disabled." >&2;}
+ 	else
+ 
+-printf "%s\n" "#define USE_UDEV 1" >>confdefs.h
++printf "%s\n" "#define USE_MDEVD 1" >>confdefs.h
+ 
+ 	fi
+ fi
+diff '--color=auto' -rup a/configure.ac b/configure.ac
+--- a/configure.ac	2024-09-02 21:08:40.000000000 -0000
++++ b/configure.ac	2025-01-25 06:23:41.777356967 -0000
+@@ -431,9 +431,9 @@ AC_ARG_ENABLE([selinux],
+ 	AS_HELP_STRING([--disable-selinux], [disable selinux support [default=auto]]),
+ 	[], [enable_selinux=yes])
+ 
+-AC_ARG_ENABLE([udev],
+-	AS_HELP_STRING([--disable-udev], [disable udev support]),
+-	[], [enable_udev=yes])
++AC_ARG_ENABLE([mdevd],
++	AS_HELP_STRING([--disable-mdevd], [disable mdevd support]),
++	[], [enable_mdevd=yes])
+ 
+ dnl Try to use pkg-config for devmapper, but fallback to old detection
+ PKG_CHECK_MODULES([DEVMAPPER], [devmapper >= 1.02.03],, [
+@@ -453,12 +453,12 @@ AC_CHECK_DECLS([dm_device_has_mounted_fs
+ AC_CHECK_DECLS([dm_device_has_holders], [], [], [#include <libdevmapper.h>])
+ AC_CHECK_DECLS([dm_device_get_name], [], [], [#include <libdevmapper.h>])
+ AC_CHECK_DECLS([DM_DEVICE_GET_TARGET_VERSION], [], [], [#include <libdevmapper.h>])
+-AC_CHECK_DECLS([DM_UDEV_DISABLE_DISK_RULES_FLAG], [have_cookie=yes], [have_cookie=no], [#include <libdevmapper.h>])
+-if test "x$enable_udev" = xyes; then
++AC_CHECK_DECLS([DM_MDEVD_DISABLE_DISK_RULES_FLAG], [have_cookie=yes], [have_cookie=no], [#include <libdevmapper.h>])
++if test "x$enable_mdevd" = xyes; then
+ 	if test "x$have_cookie" = xno; then
+-		AC_MSG_WARN([The device-mapper library on your system has no udev support, udev support disabled.])
++		AC_MSG_WARN([The device-mapper library on your system has no mdevd support, mdevd support disabled.])
+ 	else
+-		AC_DEFINE(USE_UDEV, 1, [Try to use udev synchronisation?])
++		AC_DEFINE(USE_MDEVD, 1, [Try to use mdevd synchronisation?])
+ 	fi
+ fi
+ LIBS=$saved_LIBS
+diff '--color=auto' -rup a/docs/ChangeLog.old b/docs/ChangeLog.old
+--- a/docs/ChangeLog.old	2023-07-18 10:08:00.000000000 -0000
++++ b/docs/ChangeLog.old	2025-01-25 06:07:00.464018893 -0000
+@@ -65,7 +65,7 @@
+ 	* Relax --shared test, allow mapping even for overlapping segments.
+ 	* Support shared flag for LUKS devices (dangerous).
+ 	* Switch on retry on device remove for libdevmapper.
+-	* Allow "private" activation (skip some udev global rules) flag.
++	* Allow "private" activation (skip some mdevd global rules) flag.
+ 
+ 2012-04-09  Milan Broz  <gmazyland@gmail.com>
+ 	* Fix header check to support old (cryptsetup 1.0.0) header alignment. (1.4.0)
+@@ -280,7 +280,7 @@
+ 	* Add FAQ (Frequently Asked Questions) file to distribution.
+ 
+ 2010-07-03  Milan Broz  <mbroz@redhat.com>
+-	* Fix udev support for old libdevmapper with not compatible definition.
++	* Fix mdevd support for old libdevmapper with not compatible definition.
+ 	* Version 1.1.3.
+ 
+ 2010-06-01  Milan Broz  <mbroz@redhat.com>
+@@ -319,7 +319,7 @@
+ 2010-04-12  Milan Broz  <mbroz@redhat.com>
+ 	* Fix package config to use proper package version.
+ 	* Avoid class C++ keyword in library header.
+-	* Detect and use devmapper udev support if available (disable by --disable-udev).
++	* Detect and use devmapper mdevd support if available (disable by --disable-mdevd).
+ 
+ 2010-04-06  Milan Broz  <mbroz@redhat.com>
+ 	* Prefer some device paths in status display.
+@@ -470,7 +470,7 @@
+ 	* Wipe start of device (possible fs signature) before LUKS-formatting.
+ 	* Do not process configure.in in hidden directories.
+ 	* Return more descriptive error in case of IO or header format error.
+-	* Use remapping to error target instead of calling udevsettle for temporary crypt device.
++	* Use remapping to error target instead of calling mdevd-coldplug for temporary crypt device.
+ 	* Check device mapper communication and warn user if device-mapper support missing in kernel.
+ 	* Fix signal handler to properly close device.
+ 	* write_lseek_blockwise: declare innerCount outside the if block.
+diff '--color=auto' -rup a/docs/LUKS2-locking.txt b/docs/LUKS2-locking.txt
+--- a/docs/LUKS2-locking.txt	2024-01-17 21:00:10.000000000 -0000
++++ b/docs/LUKS2-locking.txt	2025-01-25 06:06:28.204018739 -0000
+@@ -23,7 +23,7 @@ Such header corruption is detected early
+ procedure takes place (the corrupted header with checksum mismatch is being
+ replaced by the secondary one if that one is intact).
+ On current Linux systems header load operation may be triggered without the user
+-direct intervention for example by an udev rule or from a systemd service.
++direct intervention for example by an mdevd rule or from a systemd service.
+ Such a clash of header read and auto-recovery procedure could have severe
+ consequences with the worst case of having a LUKS2 device inaccessible or being
+ broken beyond repair.
+diff '--color=auto' -rup a/docs/v1.0.7-ReleaseNotes b/docs/v1.0.7-ReleaseNotes
+--- a/docs/v1.0.7-ReleaseNotes	2012-02-07 17:50:24.000000000 -0000
++++ b/docs/v1.0.7-ReleaseNotes	2025-01-25 06:07:31.070685711 -0000
+@@ -69,7 +69,7 @@ LUKS-formatting. [Milan Broz]
+ * Return more descriptive error in case of IO or header format
+ error. [Milan Broz]
+ 
+-* Use remapping to error target instead of calling udevsettle
++* Use remapping to error target instead of calling mdevd-coldplug
+ for temporary crypt device. [Milan Broz]
+ 
+ * Check device mapper communication and warn user in case the
+diff '--color=auto' -rup a/docs/v1.1.1-ReleaseNotes b/docs/v1.1.1-ReleaseNotes
+--- a/docs/v1.1.1-ReleaseNotes	2012-02-07 17:50:24.000000000 -0000
++++ b/docs/v1.1.1-ReleaseNotes	2025-01-25 06:05:59.877351936 -0000
+@@ -12,12 +12,12 @@ Changes since version 1.1.0
+ Important changes:
+ ~~~~~~~~~~~~~~~~~~
+ 
+-* Detects and use device-mapper udev support if available.
++* Detects and use device-mapper mdevd support if available.
+ 
+-  This should allow synchronisation with udev rules and avoid races with udev.
++  This should allow synchronisation with mdevd rules and avoid races with mdevd.
+ 
+   If package maintainer want to use old, direct libdevmapper device node creation,
+-  use configure option --disable-udev.
++  use configure option --disable-mdevd.
+ 
+ * Supports device topology detection for data alignment.
+ 
+diff '--color=auto' -rup a/docs/v1.1.3-ReleaseNotes b/docs/v1.1.3-ReleaseNotes
+--- a/docs/v1.1.3-ReleaseNotes	2012-02-07 17:50:24.000000000 -0000
++++ b/docs/v1.1.3-ReleaseNotes	2025-01-25 06:08:16.030685918 -0000
+@@ -8,6 +8,6 @@
+ * Fix activate_by_* API calls to handle NULL device name as documented.
+   (To enable check of passphrase/keyfile using libcryptsetup without activating the device.) 
+ 
+-* Fix udev support for old libdevmapper with not compatible definition.
++* Fix mdevd support for old libdevmapper with not compatible definition.
+ 
+ * Added Polish translation file.
+diff '--color=auto' -rup a/docs/v1.4.3-ReleaseNotes b/docs/v1.4.3-ReleaseNotes
+--- a/docs/v1.4.3-ReleaseNotes	2023-07-18 10:08:00.000000000 -0000
++++ b/docs/v1.4.3-ReleaseNotes	2025-01-25 06:05:37.090685159 -0000
+@@ -31,9 +31,9 @@ Changes since version 1.4.2
+ * Switch on retry on device remove for libdevmapper.
+   Device-mapper now retry removal if device is busy.
+ 
+-* Allow "private" activation (skip some udev global rules) flag.
++* Allow "private" activation (skip some mdevd global rules) flag.
+   Cryptsetup library API now allows one to specify CRYPT_ACTIVATE_PRIVATE,
+-  which means that some udev rules are not processed.
++  which means that some mdevd rules are not processed.
+   (Used for temporary devices, like internal keyslot mappings where
+   it is not desirable to run any device scans.)
+ 
+diff '--color=auto' -rup a/docs/v2.0.0-ReleaseNotes b/docs/v2.0.0-ReleaseNotes
+--- a/docs/v2.0.0-ReleaseNotes	2023-03-04 19:23:41.000000000 -0000
++++ b/docs/v2.0.0-ReleaseNotes	2025-01-25 05:59:57.800683580 -0000
+@@ -420,7 +420,7 @@ The newly added features in LUKS2 includ
+ 
+   The header now contains additional fields for label and subsystem (additional
+   label). These fields can be used similar to filesystem label and will be
+-  visible in udev rules to possible filtering. (Note that blkid do not yet
++  visible in mdevd rules to possible filtering. (Note that blkid do not yet
+   contain the LUKS scanning code).
+ 
+   By default both labels are empty. Label and subsystem are always set together
+diff '--color=auto' -rup a/docs/v2.2.0-ReleaseNotes b/docs/v2.2.0-ReleaseNotes
+--- a/docs/v2.2.0-ReleaseNotes	2023-03-04 19:22:27.000000000 -0000
++++ b/docs/v2.2.0-ReleaseNotes	2025-01-25 06:01:51.817350778 -0000
+@@ -162,7 +162,7 @@ Most of these limitations will be (hopef
+ * The repair command is not finished; the recovery of interrupted
+   reencryption is made automatically on the first device activation.
+ 
+-* Reencryption triggers too many udev scans on metadata updates (on closing
++* Reencryption triggers too many mdevd scans on metadata updates (on closing
+   write enabled file descriptors). This has a negative performance impact on the whole
+   reencryption and generates excessive I/O load on the system.
+ 
+@@ -229,7 +229,7 @@ Other changes and fixes
+ 
+ * The libcryptsetup now keeps all file descriptors to underlying device
+   open during the whole lifetime of crypt device context to avoid excessive
+-  scanning in udev (udev run scan on every descriptor close).
++  scanning in mdevd (mdevd run scan on every descriptor close).
+ 
+ * The luksDump command now prints more info for reencryption keyslot
+   (when a device is in-reencryption).
+diff '--color=auto' -rup a/docs/v2.4.1-ReleaseNotes b/docs/v2.4.1-ReleaseNotes
+--- a/docs/v2.4.1-ReleaseNotes	2023-03-04 19:23:41.000000000 -0000
++++ b/docs/v2.4.1-ReleaseNotes	2025-01-25 06:02:41.664017677 -0000
+@@ -19,8 +19,8 @@ Changes since version 2.4.0
+   (standalone argp library, external gettext library, BusyBox
+   implementations of standard tools).
+ 
+-* Try to workaround some issues on systems without udev support.
+-  NOTE: non-udev systems cannot provide all functionality for kernel
++* Try to workaround some issues on systems without mdevd support.
++  NOTE: non-mdevd systems cannot provide all functionality for kernel
+   device-mapper, and some operations can fail.
+ 
+ * Fixes for OpenSSL3 crypto backend (including FIPS mode).
+diff '--color=auto' -rup a/docs/v2.4.2-ReleaseNotes b/docs/v2.4.2-ReleaseNotes
+--- a/docs/v2.4.2-ReleaseNotes	2023-03-04 19:23:41.000000000 -0000
++++ b/docs/v2.4.2-ReleaseNotes	2025-01-25 06:04:41.564018244 -0000
+@@ -33,5 +33,5 @@ Changes since version 2.4.1
+   This allows building a static binary with  --disable-external-tokens.
+ 
+ * LUKS convert: also check sysfs for device activity.
+-  If udev symlink is missing, code fallbacks to sysfs scan to prevent
++  If mdevd symlink is missing, code fallbacks to sysfs scan to prevent
+   data corruption for the active device.
+diff '--color=auto' -rup a/docs/v2.6.0-ReleaseNotes b/docs/v2.6.0-ReleaseNotes
+--- a/docs/v2.6.0-ReleaseNotes	2023-10-28 18:26:43.000000000 -0000
++++ b/docs/v2.6.0-ReleaseNotes	2025-01-25 06:03:11.447351153 -0000
+@@ -161,7 +161,7 @@ Changes since version 2.5.0
+ 
+ * Provide pkgconfig Require.private settings.
+ 
+-  While we do not completely provide static build on udev systems,
++  While we do not completely provide static build on mdevd systems,
+   it helps produce statically linked binaries in certain situations.
+ 
+ * Always update automake library files if autogen.sh is run.
+diff '--color=auto' -rup a/lib/libcryptsetup.h b/lib/libcryptsetup.h
+--- a/lib/libcryptsetup.h	2024-09-02 20:52:09.000000000 -0000
++++ b/lib/libcryptsetup.h	2025-01-25 06:19:37.490689132 -0000
+@@ -1456,7 +1456,7 @@ int crypt_keyslot_destroy(struct crypt_d
+ #define CRYPT_ACTIVATE_SHARED   (UINT32_C(1) << 2)
+ /** enable discards aka TRIM */
+ #define CRYPT_ACTIVATE_ALLOW_DISCARDS (UINT32_C(1) << 3)
+-/** skip global udev rules in activation ("private device"), input only */
++/** skip global mdevd rules in activation ("private device"), input only */
+ #define CRYPT_ACTIVATE_PRIVATE (UINT32_C(1) << 4)
+ /** corruption detected (verity), output only */
+ #define CRYPT_ACTIVATE_CORRUPTED (UINT32_C(1) << 5)
+diff '--color=auto' -rup a/lib/libdevmapper.c b/lib/libdevmapper.c
+--- a/lib/libdevmapper.c	2024-09-02 20:52:09.000000000 -0000
++++ b/lib/libdevmapper.c	2025-01-25 06:13:45.307354162 -0000
+@@ -46,23 +46,23 @@ static int _dm_use_count = 0;
+ static int dm_task_secure_data(struct dm_task *dmt) { return 1; }
+ #endif
+ 
+-/* Compatibility for old device-mapper without udev support */
+-#if HAVE_DECL_DM_UDEV_DISABLE_DISK_RULES_FLAG
+-#define CRYPT_TEMP_UDEV_FLAGS	DM_UDEV_DISABLE_SUBSYSTEM_RULES_FLAG | \
+-				DM_UDEV_DISABLE_DISK_RULES_FLAG | \
+-				DM_UDEV_DISABLE_OTHER_RULES_FLAG
++/* Compatibility for old device-mapper without mdevd support */
++#if HAVE_DECL_DM_MDEVD_DISABLE_DISK_RULES_FLAG
++#define CRYPT_TEMP_MDEVD_FLAGS	DM_MDEVD_DISABLE_SUBSYSTEM_RULES_FLAG | \
++				DM_MDEVD_DISABLE_DISK_RULES_FLAG | \
++				DM_MDEVD_DISABLE_OTHER_RULES_FLAG
+ #define _dm_task_set_cookie	dm_task_set_cookie
+-#define _dm_udev_wait		dm_udev_wait
++#define _dm_mdevd_wait		dm_mdevd_wait
+ #else
+-#define CRYPT_TEMP_UDEV_FLAGS	0
++#define CRYPT_TEMP_MDEVD_FLAGS	0
+ static int _dm_task_set_cookie(struct dm_task *dmt, uint32_t *cookie, uint16_t flags) { return 0; }
+-static int _dm_udev_wait(uint32_t cookie) { return 0; };
++static int _dm_mdevd_wait(uint32_t cookie) { return 0; };
+ #endif
+ 
+-static int _dm_use_udev(void)
++static int _dm_use_mdevd(void)
+ {
+-#ifdef USE_UDEV /* cannot be enabled if devmapper is too old */
+-	return dm_udev_get_sync_support();
++#ifdef USE_MDEVD /* cannot be enabled if devmapper is too old */
++	return dm_mdevd_get_sync_support();
+ #else
+ 	return 0;
+ #endif
+@@ -346,8 +346,8 @@ static int _dm_check_versions(struct cry
+ 
+ 	r = 1;
+ 	if (!_dm_ioctl_checked)
+-		log_dbg(cd, "Device-mapper backend running with UDEV support %sabled.",
+-			_dm_use_udev() ? "en" : "dis");
++		log_dbg(cd, "Device-mapper backend running with MDEVD support %sabled.",
++			_dm_use_mdevd() ? "en" : "dis");
+ 
+ 	_dm_ioctl_checked = true;
+ out:
+@@ -932,14 +932,14 @@ static char *get_dm_zero_params(void)
+ }
+ 
+ /* DM helpers */
+-static int _dm_remove(const char *name, int udev_wait, int deferred)
++static int _dm_remove(const char *name, int mdevd_wait, int deferred)
+ {
+ 	int r = 0;
+ 	struct dm_task *dmt;
+ 	uint32_t cookie = 0;
+ 
+-	if (!_dm_use_udev())
+-		udev_wait = 0;
++	if (!_dm_use_mdevd())
++		mdevd_wait = 0;
+ 
+ 	if (!(dmt = dm_task_create(DM_DEVICE_REMOVE)))
+ 		return 0;
+@@ -955,13 +955,13 @@ static int _dm_remove(const char *name,
+ 	if (deferred && !dm_task_deferred_remove(dmt))
+ 		goto out;
+ #endif
+-	if (udev_wait && !_dm_task_set_cookie(dmt, &cookie, DM_UDEV_DISABLE_LIBRARY_FALLBACK))
++	if (mdevd_wait && !_dm_task_set_cookie(dmt, &cookie, DM_MDEVD_DISABLE_LIBRARY_FALLBACK))
+ 		goto out;
+ 
+ 	r = dm_task_run(dmt);
+ 
+-	if (udev_wait)
+-		(void)_dm_udev_wait(cookie);
++	if (mdevd_wait)
++		(void)_dm_mdevd_wait(cookie);
+ out:
+ 	dm_task_destroy(dmt);
+ 	return r;
+@@ -1103,7 +1103,7 @@ int dm_remove_device(struct crypt_device
+ 				 * it should stop processes from reading it and also removed underlying
+ 				 * device from mapping, so it is usable again.
+ 				 * Anyway, if some process try to read temporary cryptsetup device,
+-				 * it is bug - no other process should try touch it (e.g. udev).
++				 * it is bug - no other process should try touch it (e.g. mdevd).
+ 				 */
+ 				if (!dm_query_device(cd, name, 0, &dmd)) {
+ 					_error_device(name, dmd.size);
+@@ -1163,7 +1163,7 @@ static int dm_prepare_uuid(struct crypt_
+ 
+ int lookup_dm_dev_by_uuid(struct crypt_device *cd, const char *uuid, const char *type)
+ {
+-	int r_udev, r;
++	int r_mdevd, r;
+ 	char *c;
+ 	char dev_uuid[DM_UUID_LEN + DM_BY_ID_PREFIX_LEN] = DM_BY_ID_PREFIX;
+ 
+@@ -1177,15 +1177,15 @@ int lookup_dm_dev_by_uuid(struct crypt_d
+ 	/* cut of dm name */
+ 	*c = '\0';
+ 
+-	/* Either udev or sysfs can report that device is active. */
++	/* Either mdevd or sysfs can report that device is active. */
+ 	r = lookup_by_disk_id(dev_uuid);
+ 	if (r > 0)
+ 		return r;
+ 
+-	r_udev = r;
++	r_mdevd = r;
+ 	r = lookup_by_sysfs_uuid_field(dev_uuid + DM_BY_ID_PREFIX_LEN);
+ 
+-	return r == -ENOENT ? r_udev : r;
++	return r == -ENOENT ? r_mdevd : r;
+ }
+ 
+ static int _add_dm_targets(struct dm_task *dmt, struct crypt_dm_active_device *dmd)
+@@ -1318,10 +1318,10 @@ static int _dm_create_device(struct cryp
+ 	char dev_uuid[DM_UUID_LEN] = {0};
+ 	int r = -EINVAL;
+ 	uint32_t cookie = 0, read_ahead = 0;
+-	uint16_t udev_flags = DM_UDEV_DISABLE_LIBRARY_FALLBACK;
++	uint16_t mdevd_flags = DM_MDEVD_DISABLE_LIBRARY_FALLBACK;
+ 
+ 	if (dmd->flags & CRYPT_ACTIVATE_PRIVATE)
+-		udev_flags |= CRYPT_TEMP_UDEV_FLAGS;
++		mdevd_flags |= CRYPT_TEMP_MDEVD_FLAGS;
+ 
+ 	/* All devices must have DM_UUID, only resize on old device is exception */
+ 	if (!dm_prepare_uuid(cd, name, type, dmd->uuid, dev_uuid, sizeof(dev_uuid)))
+@@ -1356,7 +1356,7 @@ static int _dm_create_device(struct cryp
+ 	    !dm_task_set_read_ahead(dmt, read_ahead, DM_READ_AHEAD_MINIMUM_FLAG))
+ 		goto out;
+ #endif
+-	if (_dm_use_udev() && !_dm_task_set_cookie(dmt, &cookie, udev_flags))
++	if (_dm_use_mdevd() && !_dm_task_set_cookie(dmt, &cookie, mdevd_flags))
+ 		goto out;
+ 
+ 	if (!dm_task_run(dmt)) {
+@@ -1403,8 +1403,8 @@ static int _dm_create_device(struct cryp
+ 	if (dm_task_get_info(dmt, &dmi))
+ 		r = 0;
+ 
+-	if (_dm_use_udev()) {
+-		(void)_dm_udev_wait(cookie);
++	if (_dm_use_mdevd()) {
++		(void)_dm_mdevd_wait(cookie);
+ 		cookie = 0;
+ 	}
+ 
+@@ -1412,8 +1412,8 @@ static int _dm_create_device(struct cryp
+ 		_dm_remove(name, 1, 0);
+ 
+ out:
+-	if (cookie && _dm_use_udev())
+-		(void)_dm_udev_wait(cookie);
++	if (cookie && _dm_use_mdevd())
++		(void)_dm_mdevd_wait(cookie);
+ 
+ 	if (dmt)
+ 		dm_task_destroy(dmt);
+@@ -1433,10 +1433,10 @@ static int _dm_resume_device(const char
+ 	struct dm_task *dmt;
+ 	int r = -EINVAL;
+ 	uint32_t cookie = 0;
+-	uint16_t udev_flags = DM_UDEV_DISABLE_LIBRARY_FALLBACK;
++	uint16_t mdevd_flags = DM_MDEVD_DISABLE_LIBRARY_FALLBACK;
+ 
+ 	if (dmflags & DM_RESUME_PRIVATE)
+-		udev_flags |= CRYPT_TEMP_UDEV_FLAGS;
++		mdevd_flags |= CRYPT_TEMP_MDEVD_FLAGS;
+ 
+ 	if (!(dmt = dm_task_create(DM_DEVICE_RESUME)))
+ 		return r;
+@@ -1450,14 +1450,14 @@ static int _dm_resume_device(const char
+ 	if ((dmflags & DM_SUSPEND_NOFLUSH) && !dm_task_no_flush(dmt))
+ 		goto out;
+ 
+-	if (_dm_use_udev() && !_dm_task_set_cookie(dmt, &cookie, udev_flags))
++	if (_dm_use_mdevd() && !_dm_task_set_cookie(dmt, &cookie, mdevd_flags))
+ 		goto out;
+ 
+ 	if (dm_task_run(dmt))
+ 		r = 0;
+ out:
+-	if (cookie && _dm_use_udev())
+-		(void)_dm_udev_wait(cookie);
++	if (cookie && _dm_use_mdevd())
++		(void)_dm_mdevd_wait(cookie);
+ 
+ 	dm_task_destroy(dmt);
+ 
+diff '--color=auto' -rup a/lib/utils_devpath.c b/lib/utils_devpath.c
+--- a/lib/utils_devpath.c	2024-06-22 20:57:16.000000000 -0000
++++ b/lib/utils_devpath.c	2025-01-25 06:20:09.064022613 -0000
+@@ -81,7 +81,7 @@ static char *__lookup_dev(char *path, de
+ }
+ 
+ /*
+- * Non-udev systemd need to scan for device here.
++ * Non-mdevd systemd need to scan for device here.
+  */
+ static char *lookup_dev_old(int major, int minor)
+ {
+diff '--color=auto' -rup a/man/common_options.adoc b/man/common_options.adoc
+--- a/man/common_options.adoc	2024-09-02 20:52:09.000000000 -0000
++++ b/man/common_options.adoc	2025-01-25 06:21:01.600689539 -0000
+@@ -599,7 +599,7 @@ ifdef::ACTION_LUKSFORMAT,ACTION_CONFIG,A
+ *--label <LABEL> --subsystem <SUBSYSTEM>*::
+ Set label and subsystem description for LUKS2 device.
+ The label and subsystem are optional fields and can be later used
+-in udev scripts for triggering user actions once the device marked
++in mdevd scripts for triggering user actions once the device marked
+ by these labels is detected.
+ endif::[]
+ 
+diff '--color=auto' -rup a/man/cryptsetup-config.8 b/man/cryptsetup-config.8
+--- a/man/cryptsetup-config.8	2024-09-02 20:57:24.000000000 -0000
++++ b/man/cryptsetup-config.8	2025-01-25 06:21:49.467356429 -0000
+@@ -102,7 +102,7 @@ size and key size, but a valid key slot
+ .RS 4
+ Set label and subsystem description for LUKS2 device.
+ The label and subsystem are optional fields and can be later used
+-in udev scripts for triggering user actions once the device marked
++in mdevd scripts for triggering user actions once the device marked
+ by these labels is detected.
+ .RE
+ .sp
+diff '--color=auto' -rup a/man/cryptsetup-luksFormat.8 b/man/cryptsetup-luksFormat.8
+--- a/man/cryptsetup-luksFormat.8	2024-09-02 20:57:22.000000000 -0000
++++ b/man/cryptsetup-luksFormat.8	2025-01-25 06:20:35.474022747 -0000
+@@ -309,7 +309,7 @@ area.
+ .RS 4
+ Set label and subsystem description for LUKS2 device.
+ The label and subsystem are optional fields and can be later used
+-in udev scripts for triggering user actions once the device marked
++in mdevd scripts for triggering user actions once the device marked
+ by these labels is detected.
+ .RE
+ .sp
+@@ -553,4 +553,4 @@ Please attach output of the failed comma
+ .SH "CRYPTSETUP"
+ .sp
+ Part of \c
+-.URL "https://gitlab.com/cryptsetup/cryptsetup/" "\fBcryptsetup project\fP" "."
+\ No newline at end of file
++.URL "https://gitlab.com/cryptsetup/cryptsetup/" "\fBcryptsetup project\fP" "."
+diff '--color=auto' -rup a/man/cryptsetup-reencrypt.8 b/man/cryptsetup-reencrypt.8
+--- a/man/cryptsetup-reencrypt.8	2024-09-02 20:57:22.000000000 -0000
++++ b/man/cryptsetup-reencrypt.8	2025-01-25 06:21:28.207356328 -0000
+@@ -461,7 +461,7 @@ area.
+ .RS 4
+ Set label and subsystem description for LUKS2 device.
+ The label and subsystem are optional fields and can be later used
+-in udev scripts for triggering user actions once the device marked
++in mdevd scripts for triggering user actions once the device marked
+ by these labels is detected.
+ .RE
+ .sp
+@@ -811,4 +811,4 @@ Please attach output of the failed comma
+ .SH "CRYPTSETUP"
+ .sp
+ Part of \c
+-.URL "https://gitlab.com/cryptsetup/cryptsetup/" "\fBcryptsetup project\fP" "."
+\ No newline at end of file
++.URL "https://gitlab.com/cryptsetup/cryptsetup/" "\fBcryptsetup project\fP" "."
+diff '--color=auto' -rup a/meson.build b/meson.build
+--- a/meson.build	2024-09-02 21:08:40.000000000 -0000
++++ b/meson.build	2025-01-25 06:24:20.050690482 -0000
+@@ -387,19 +387,19 @@ endforeach
+ 
+ foreach symbol : [
+     'DM_DEVICE_GET_TARGET_VERSION',
+-    'DM_UDEV_DISABLE_DISK_RULES_FLAG',
++    'DM_MDEVD_DISABLE_DISK_RULES_FLAG',
+ ]
+     has_symbol = cc.has_header_symbol('libdevmapper.h', symbol,
+         dependencies: devmapper)
+     conf.set10('HAVE_DECL_' + symbol.underscorify().to_upper(), has_symbol)
+ endforeach
+ 
+-if cc.has_header_symbol('libdevmapper.h', 'DM_UDEV_DISABLE_DISK_RULES_FLAG',
++if cc.has_header_symbol('libdevmapper.h', 'DM_MDEVD_DISABLE_DISK_RULES_FLAG',
+         dependencies: devmapper)
+-    conf.set10('USE_UDEV', true,
+-        description: 'Try to use udev synchronisation?')
++    conf.set10('USE_MDEVD', true,
++        description: 'Try to use mdevd synchronisation?')
+ else
+-    warning('The device-mapper library on your system has no udev support, udev support disabled.')
++    warning('The device-mapper library on your system has no mdevd support, mdevd support disabled.')
+ endif
+ 
+ # ==========================================================================
+diff '--color=auto' -rup a/meson_options.txt b/meson_options.txt
+--- a/meson_options.txt	2024-09-02 20:52:09.000000000 -0000
++++ b/meson_options.txt	2025-01-25 06:18:20.917355444 -0000
+@@ -54,5 +54,5 @@ option('ssh-token', type : 'boolean', de
+ option('static-cryptsetup', type : 'boolean', description : 'enable build of static version of tools', value : false)
+ option('systemd-tokens-test', type : 'boolean', description : 'compile systemd tokens and test using them from cryptsetup', value : false)
+ option('tmpfilesdir', type : 'string', description : 'override default path to directory with systemd temporary files')
+-option('udev', type : 'boolean', description : 'udev support', value : true)
++option('mdevd', type : 'boolean', description : 'mdevd support', value : true)
+ option('veritysetup', type : 'boolean', description : 'veritysetup support', value : true)
+diff '--color=auto' -rup a/misc/11-dm-crypt.rules b/misc/11-dm-crypt.rules
+--- a/misc/11-dm-crypt.rules	2014-03-15 07:45:03.000000000 -0000
++++ b/misc/11-dm-crypt.rules	2025-01-25 06:24:55.294023974 -0000
+@@ -1,17 +1,17 @@
+-# Old udev rules historically used in device-mapper.
++# Old mdevd rules historically used in device-mapper.
+ # No need to install these until you have some weird configuration.
+ # (Code internally set the same flags.)
+ 
+ ACTION!="add|change", GOTO="crypt_end"
+-ENV{DM_UDEV_RULES_VSN}!="?*", GOTO="crypt_end"
++ENV{DM_MDEVD_RULES_VSN}!="?*", GOTO="crypt_end"
+ 
+ ENV{DM_UUID}=="CRYPT-TEMP-?*", GOTO="crypt_disable"
+ ENV{DM_UUID}!="?*", ENV{DM_NAME}=="temporary-cryptsetup-?*", GOTO="crypt_disable"
+ GOTO="crypt_end"
+ 
+ LABEL="crypt_disable"
+-ENV{DM_UDEV_DISABLE_SUBSYSTEM_RULES_FLAG}="1"
+-ENV{DM_UDEV_DISABLE_DISK_RULES_FLAG}="1"
+-ENV{DM_UDEV_DISABLE_OTHER_RULES_FLAG}="1"
++ENV{DM_MDEVD_DISABLE_SUBSYSTEM_RULES_FLAG}="1"
++ENV{DM_MDEVD_DISABLE_DISK_RULES_FLAG}="1"
++ENV{DM_MDEVD_DISABLE_OTHER_RULES_FLAG}="1"
+ 
+ LABEL="crypt_end"
+diff '--color=auto' -rup a/src/utils_tools.c b/src/utils_tools.c
+--- a/src/utils_tools.c	2024-09-02 20:52:09.000000000 -0000
++++ b/src/utils_tools.c	2025-01-25 06:19:09.817355675 -0000
+@@ -422,11 +422,11 @@ int tools_write_mk(const char *file, con
+ 
+ void tools_package_version(const char *name, bool use_pwlibs)
+ {
+-	bool udev = false, blkid = false, keyring = false, fips = false,
++	bool mdevd = false, blkid = false, keyring = false, fips = false,
+ 	     kernel_capi = false, pwquality = false, passwdqc = false,
+ 	     hw_opal = false;
+-#ifdef USE_UDEV
+-	udev = true;
++#ifdef USE_MDEVD
++	mdevd = true;
+ #endif
+ #ifdef HAVE_BLKID
+ 	blkid = true;
+@@ -449,7 +449,7 @@ void tools_package_version(const char *n
+ 	hw_opal = true;
+ #endif
+ 	log_std("%s %s flags: %s%s%s%s%s%s%s%s\n", name, PACKAGE_VERSION,
+-		udev ?	"UDEV " : "",
++		mdevd ?	"MDEVD " : "",
+ 		blkid ? "BLKID " : "",
+ 		keyring ? "KEYRING " : "",
+ 		fips ? "FIPS " : "",
+diff '--color=auto' -rup a/tests/align-test b/tests/align-test
+--- a/tests/align-test	2024-06-11 10:33:56.000000000 -0000
++++ b/tests/align-test	2025-01-25 05:50:06.057347527 -0000
+@@ -26,7 +26,7 @@ function fips_mode()
+ }
+ 
+ cleanup() {
+-	udevadm settle >/dev/null 2>&1
++	mdevd-coldplug -O4 >/dev/null 2>&1
+ 	if [ -d "$MNT_DIR" ] ; then
+ 		umount -f $MNT_DIR 2>/dev/null
+ 		rmdir $MNT_DIR 2>/dev/null
+diff '--color=auto' -rup a/tests/align-test2 b/tests/align-test2
+--- a/tests/align-test2	2024-06-11 10:33:56.000000000 -0000
++++ b/tests/align-test2	2025-01-25 05:40:13.827344744 -0000
+@@ -19,7 +19,7 @@ else
+ fi
+ 
+ cleanup() {
+-	udevadm settle >/dev/null 2>&1
++	mdevd-coldplug -O4 >/dev/null 2>&1
+ 	if [ -d "$MNT_DIR" ] ; then
+ 		umount -f $MNT_DIR 2>/dev/null
+ 		rmdir $MNT_DIR 2>/dev/null
+diff '--color=auto' -rup a/tests/api-test-2.c b/tests/api-test-2.c
+--- a/tests/api-test-2.c	2024-06-11 10:33:56.000000000 -0000
++++ b/tests/api-test-2.c	2025-01-25 05:44:33.980679292 -0000
+@@ -527,7 +527,7 @@ static void _cleanup(void)
+ 	CRYPT_FREE(cd);
+ 	CRYPT_FREE(cd2);
+ 
+-	//_system("udevadm settle", 0);
++	//_system("mdevd-coldplug -O4", 0);
+ 
+ 	if (!stat(DMDIR CDEVICE_1, &st))
+ 		_system("dmsetup remove " DM_RETRY CDEVICE_1 DM_NOSTDERR, 0);
+diff '--color=auto' -rup a/tests/api-test.c b/tests/api-test.c
+--- a/tests/api-test.c	2024-09-02 12:54:14.000000000 -0000
++++ b/tests/api-test.c	2025-01-25 05:43:38.840679043 -0000
+@@ -164,7 +164,7 @@ static void _cleanup(void)
+ 	CRYPT_FREE(cd);
+ 	CRYPT_FREE(cd2);
+ 
+-	//_system("udevadm settle", 0);
++	//_system("mdevd-coldplug -O4", 0);
+ 
+ 	if (!stat(DMDIR CDEVICE_1, &st))
+ 		_system("dmsetup remove " DM_RETRY CDEVICE_1 DM_NOSTDERR, 0);
+diff '--color=auto' -rup a/tests/device-test b/tests/device-test
+--- a/tests/device-test	2024-09-02 20:52:09.000000000 -0000
++++ b/tests/device-test	2025-01-25 05:46:27.910679840 -0000
+@@ -20,7 +20,7 @@ fi
+ 
+ cleanup() {
+ 	[ -b /dev/mapper/$DEV_NAME ] && dmsetup remove --retry $DEV_NAME
+-	udevadm settle >/dev/null 2>&1
++	mdevd-coldplug -O4 >/dev/null 2>&1
+ 	if [ -d "$MNT_DIR" ] ; then
+ 		umount -f $MNT_DIR 2>/dev/null
+ 		rmdir $MNT_DIR 2>/dev/null
+@@ -347,7 +347,7 @@ for F in LUKS1 LUKS2 BITLK TCRYPT; do
+ 	dmsetup create $DEV_NAME --uuid CRYPT-$F-$DEV_NAME --table "0 1024 crypt aes-xts-plain64 $KEY 16 /dev/$SCSI_DEV 16"
+ 	$CRYPTSETUP status $DEV_NAME >/dev/null 2>&1 || fail
+ 	echo 1 > /sys/block/$SCSI_DEV/device/delete
+-	udevadm settle >/dev/null 2>&1
++	mdevd-coldplug -O4 >/dev/null 2>&1
+ 	$CRYPTSETUP status $DEV_NAME >/dev/null 2>&1 || fail
+ 	dmsetup remove $DEV_NAME --retry || fail
+ 	rmmod scsi_debug >/dev/null 2>&1
+diff '--color=auto' -rup a/tests/discards-test b/tests/discards-test
+--- a/tests/discards-test	2023-11-17 20:03:40.000000000 -0000
++++ b/tests/discards-test	2025-01-25 05:49:25.267347338 -0000
+@@ -15,7 +15,7 @@ fi
+ 
+ cleanup() {
+ 	[ -b /dev/mapper/$DEV_NAME ] && dmsetup remove --retry $DEV_NAME
+-	udevadm settle >/dev/null 2>&1
++	mdevd-coldplug -O4 >/dev/null 2>&1
+ 	rmmod scsi_debug >/dev/null 2>&1
+ 	sleep 1
+ }
+diff '--color=auto' -rup a/tests/fuzz/oss-fuzz-build.sh b/tests/fuzz/oss-fuzz-build.sh
+--- a/tests/fuzz/oss-fuzz-build.sh	2024-07-27 20:24:43.000000000 -0000
++++ b/tests/fuzz/oss-fuzz-build.sh	2025-01-25 06:16:55.140688385 -0000
+@@ -95,7 +95,7 @@ make install
+ cd ../..
+ 
+ cd lvm2
+-./configure --prefix="$DEPS_PATH" --enable-static_link --disable-udev_sync --enable-pkgconfig --disable-selinux
++./configure --prefix="$DEPS_PATH" --enable-static_link --disable-mdevd_sync --enable-pkgconfig --disable-selinux
+ make -j libdm.device-mapper
+ make -C libdm install_static install_pkgconfig install_include
+ cd ..
+@@ -136,7 +136,7 @@ else
+     cd ../../..
+ fi
+ ./autogen.sh
+-./configure --enable-static --disable-asciidoc --disable-ssh-token --disable-udev --disable-selinux --with-crypto_backend=openssl --disable-shared --enable-fuzz-targets
++./configure --enable-static --disable-asciidoc --disable-ssh-token --disable-mdevd --disable-selinux --with-crypto_backend=openssl --disable-shared --enable-fuzz-targets
+ make clean
+ make -j fuzz-targets
+ 
+diff '--color=auto' -rup a/tests/integrity-compat-test b/tests/integrity-compat-test
+--- a/tests/integrity-compat-test	2024-09-02 20:52:09.000000000 -0000
++++ b/tests/integrity-compat-test	2025-01-25 05:48:03.407346965 -0000
+@@ -21,7 +21,7 @@ KEY_FILE=key.img
+ KEY_FILE2=key2.img
+ 
+ dmremove() { # device
+-	udevadm settle >/dev/null 2>&1
++	mdevd-coldplug -O4 >/dev/null 2>&1
+ 	dmsetup remove --retry $1 >/dev/null 2>&1
+ }
+ 
+diff '--color=auto' -rup a/tests/loopaes-test b/tests/loopaes-test
+--- a/tests/loopaes-test	2023-11-17 20:03:40.000000000 -0000
++++ b/tests/loopaes-test	2025-01-25 05:38:43.424010980 -0000
+@@ -22,7 +22,7 @@ KEYv3=key_v3
+ LOOPDEV=$(losetup -f 2>/dev/null) || exit 0
+ 
+ function dmremove() { # device
+-	udevadm settle >/dev/null 2>&1
++	mdevd-coldplug -O4 >/dev/null 2>&1
+ 	dmsetup remove --retry $1 >/dev/null 2>&1
+ }
+ 
+diff '--color=auto' -rup a/tests/luks2-integrity-test b/tests/luks2-integrity-test
+--- a/tests/luks2-integrity-test	2023-11-17 20:03:40.000000000 -0000
++++ b/tests/luks2-integrity-test	2025-01-25 05:48:54.410680534 -0000
+@@ -19,7 +19,7 @@ else
+ fi
+ 
+ dmremove() { # device
+-	udevadm settle >/dev/null 2>&1
++	mdevd-coldplug -O4 >/dev/null 2>&1
+ 	dmsetup remove $1 >/dev/null 2>&1
+ }
+ 
+diff '--color=auto' -rup a/tests/luks2-reencryption-test b/tests/luks2-reencryption-test
+--- a/tests/luks2-reencryption-test	2024-09-02 20:52:09.000000000 -0000
++++ b/tests/luks2-reencryption-test	2025-01-25 05:51:22.740681202 -0000
+@@ -206,7 +206,7 @@ function wipe() # $1 pass, $2 hdr
+ {
+ 	open_crypt $1 $2
+ 	wipe_dev /dev/mapper/$DEV_NAME
+-	udevadm settle >/dev/null 2>&1
++	mdevd-coldplug -O4 >/dev/null 2>&1
+ 	$CRYPTSETUP luksClose $DEV_NAME || fail
+ }
+ 
+diff '--color=auto' -rup a/tests/mode-test b/tests/mode-test
+--- a/tests/mode-test	2024-09-02 20:52:09.000000000 -0000
++++ b/tests/mode-test	2025-01-25 05:41:53.597345226 -0000
+@@ -26,7 +26,7 @@ else
+ fi
+ 
+ dmremove() { # device
+-	udevadm settle >/dev/null 2>&1
++	mdevd-coldplug -O4 >/dev/null 2>&1
+ 	dmsetup remove --retry $1 >/dev/null 2>&1
+ }
+ 
+diff '--color=auto' -rup a/tests/password-hash-test b/tests/password-hash-test
+--- a/tests/password-hash-test	2023-11-17 20:03:40.000000000 -0000
++++ b/tests/password-hash-test	2025-01-25 05:36:56.514010460 -0000
+@@ -17,7 +17,7 @@ else
+ fi
+ 
+ dmremove() { # device
+-	udevadm settle >/dev/null 2>&1
++	mdevd-coldplug -O4 >/dev/null 2>&1
+ 	dmsetup remove --retry $1 >/dev/null 2>&1
+ }
+ 
+diff '--color=auto' -rup a/tests/reencryption-compat-test b/tests/reencryption-compat-test
+--- a/tests/reencryption-compat-test	2024-06-11 10:33:56.000000000 -0000
++++ b/tests/reencryption-compat-test	2025-01-25 05:50:43.257347683 -0000
+@@ -123,7 +123,7 @@ function wipe() # $1 pass
+ {
+ 	open_crypt $1
+ 	wipe_dev /dev/mapper/$DEV_NAME
+-	udevadm settle >/dev/null 2>&1
++	mdevd-coldplug -O4 >/dev/null 2>&1
+ 	$CRYPTSETUP luksClose $DEV_NAME || fail
+ }
+ 
+diff '--color=auto' -rup a/tests/verity-compat-test b/tests/verity-compat-test
+--- a/tests/verity-compat-test	2024-09-02 20:52:09.000000000 -0000
++++ b/tests/verity-compat-test	2025-01-25 05:36:05.510676882 -0000
+@@ -268,7 +268,7 @@ function check_fec()
+ 		return 3
+ 	fi
+ 
+-	udevadm settle > /dev/null 2>&1
++	mdevd-coldplug -O4 > /dev/null 2>&1
+ 
+ 	dd if=/dev/mapper/$DEV_NAME of=$IMG_TMP > /dev/null 2>&1
+ 	HASH_REPAIRED=$(sha256sum $IMG_TMP | cut -d' ' -f 1)
