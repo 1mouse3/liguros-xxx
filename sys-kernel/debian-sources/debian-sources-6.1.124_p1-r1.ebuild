@@ -484,7 +484,6 @@ src_prepare() {
 	# Apply any user patches
 	eapply_user
 
-	cd /kill/me || die "It stops"
 }
 
 src_test() {
@@ -711,7 +710,6 @@ src_install() {
         ## "/etc/kernel/certs/${KERNELTAGS}" should have the certification made
         ## "/boot" or "/boot/EFI/Liguros" should have boot files, need a if else check to give these as option choice based on efi
         ## uncheek this this to stop the build so verification can be had that all is done
-#       cd /kill/me || die "It stops"
 }
 
 pkg_postinst() {
