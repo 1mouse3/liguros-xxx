@@ -49,7 +49,8 @@ BDEPEND="
 DEPEND="
 	net-misc/dhcp[client]
 	binary? (
-                sys-kernel/installkernel
+                sys-kernel/dracut
+                sys-kernel/installkernel[dracut]
 		dev-util/pahole
 		sys-fs/squashfs-tools
 		lvm? ( sys-kernel/genkernel
@@ -557,6 +558,9 @@ src_compile() {
 
 src_install() {
         unset KBUILD_OUTPUT
+   if use tree ; then
+	rsync -ar ${S}/${SLOT}/tree/ ${D}
+   fi
    if use binary ; then
         ENV_SETUP_MAKECONF
 	debug-print-function ${FUNCNAME} ${@}
