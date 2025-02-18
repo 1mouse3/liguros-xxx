@@ -3,7 +3,6 @@
 
 EAPI=8
 
-inherit multilib-build
 
 DESCRIPTION="Virtual to select between different libudev daemon providers"
 
@@ -14,7 +13,7 @@ IUSE="systemd"
 DEPEND=" !sys-apps/systemd-utils[udev] !sys-fs/eudev !sys-fs/udev !sys-apps/systemd "
 RDEPEND="
 	!systemd? ( || (
-                sys-libs/libudev-zero[${MULTILIB_USEDEP}]
-                dev-python/pyudev[${MULTILIB_USEDEP}]
+                sys-libs/libudev-zero
+                dev-python/pyudev
         ) )
 "

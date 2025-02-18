@@ -10,7 +10,8 @@ EAPI=8
 DESCRIPTION="Daemonless replacement for libudev"
 HOMEPAGE="https://github.com/illiliti/libudev-zero"
 SRC_URI="https://github.com/illiliti/libudev-zero/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
-KEYWORDS="~amd64"
+KEYWORDS="alpha amd64 arm arm64 hppa ia64 loong m68k mips ppc ppc64 riscv s390 sparc x86"
+
 
 LICENSE="ISC"
 SLOT="0"

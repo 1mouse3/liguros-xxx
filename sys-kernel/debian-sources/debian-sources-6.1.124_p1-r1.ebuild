@@ -4,8 +4,6 @@ EAPI=8
 
 inherit check-reqs mount-boot savedconfig toolchain-funcs
 
-KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~mips ppc ppc64 ~riscv sparc x86"
-
 DESCRIPTION="Linux kernel sources with Debian patches."
 HOMEPAGE="https://packages.debian.org/unstable/kernel/"
 LICENSE="GPL-2"
@@ -51,8 +49,7 @@ BDEPEND="
 DEPEND="
 	net-misc/dhcp[client]
 	binary? (
-                sys-kernel/dracut
-                sys-kernel/installkernel[dracut]
+                sys-kernel/installkernel
 		dev-util/pahole
 		sys-fs/squashfs-tools
 		lvm? ( sys-kernel/genkernel
@@ -154,7 +151,7 @@ DEB_PATCH="linux_${DEB_PV}.debian.tar.xz"
 KERNEL_ARCHIVE="https://www.dropbox.com/scl/fi/isqrcpbld7pk6iln2dt6c/linux_6.1.124.orig.tar.xz?rlkey=kdldkzec29i70aq689yoy2yv2&st=toxjojql&dl=0&raw=1 -> ${KERNEL}"
 DEB_PATCH_ARCHIVE="https://www.dropbox.com/scl/fi/bfuyprfhj7cq17dzbruqf/linux_6.1.124-1.debian.tar.xz?rlkey=44pi91kwxa6v8mpnj5i8rcw0n&st=mmnekdpy&raw=1 -> ${DEB_PATCH}"
 DEB_DSC_ARCHIVE="https://www.dropbox.com/scl/fi/gaia3pyf5fy3uxn12rv34/linux_6.1.124-1.dsc?rlkey=84johlvp7kd8l093pj9knmdtf&st=9biultvi&dl=0&raw=1 -> linux_${DEB_PV}.dsc"
-BUILD_PATCH="/var/git/liguros-xxx/sys-kernel/hardened-sources/patch-files/"
+#BUILD_PATCH="/var/git/liguros-xxx/sys-kernel/debian-sources/files/"
 
 DISTDIR=/var/cache/portage/distfiles/
 
@@ -171,10 +168,10 @@ SRC_DIR="
 
 S="${WORKDIR}/linux-${DEB_PV_BASE}"
 
-KERNELTAGS="${DEB_PV_BASE}-hardened1"
+KERNELTAGS="${DEB_PV_BASE}-debian1"
 KERNELTAG="${DEB_PV_BASE}${MODULE_EXT}"
-D_FILESDIR="${D}/var/db/repos/liguros-xxx/sys-kernel/hardened-sources/files"
-PORTAGE_BUILDDIR="/var/tmp/portage/sys-kernel/hardened-sources-6.1.124_p1-r1"
+D_FILESDIR="${D}/var/db/repos/liguros-xxx/sys-kernel/debian-sources/files"
+PORTAGE_BUILDDIR="/var/tmp/portage/sys-kernel/debian-sources-6.1.124_p1-r1"
 USR_SRC_BUILD="${D}/lib/modules/${KERNELTAGS}/build"
 USR_SRC_BUILD_EXT="${D}/lib/modules/${KERNELTAGS}/.extra/build"
 CERTSDIR_NEW="${D}/etc/kernel/certs/${KERNELTAGS}"
@@ -258,7 +255,6 @@ pkg_setup() {
 	    READELF="$(tc-getREADELF)"
 
 	    # we need to pass it to override colliding Gentoo envvar
-#	    ARCH="x86"
             ARCH="$(tc-arch-kernel)"
                 )
         }
@@ -275,16 +271,7 @@ src_unpack() {
 
 	# Patches to graphene source
 	rsync -a ${FILESDIR}/${SLOT}/ ${SLOT} || die "failed to copy patch"
-
-	cp -ar /usr/src/linux-6.1.67-gentoo/drivers ${S}/ || die "failed to copy drivers"
    fi
-   if use backup; then
-        ## this tar is of a past run of the "binary" flag's "${WORKDIR}", so can pick backup to try again at "initramfs" flag
-        cd ${PORTAGE_BUILDDIR}
-        tar -xvf ${PORTAGE_BUILDDIR}/files/work_linux_${DEB_PV}.tar.xz
-        mv /var/tmp/portage/sys-kernel/hardened-sources-6.1.124_p1-r1/var/tmp/portage/sys-kernel/hardened-sources-6.1.124_p1-r1/work/ /var/tmp/portage/sys-kernel/hardened-sources-6.1.124_p1-r1/
-   fi
-
 }
 
 src_prepare() {
@@ -474,7 +461,7 @@ src_prepare() {
 	        echo 'CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE="4096"' >> .config
 
         # See above comment re: LibreSSL
-		        if use libressl; then
+        if use libressl; then
 			echo "CONFIG_MODULE_SIG_SHA1=y" >> .config
 		        else
 			echo "CONFIG_MODULE_SIG_SHA512=y" >> .config
@@ -529,10 +516,10 @@ src_configure() {
 	## need a kill option if this dose not exist
 	fi
         if use savedconfig; then
-	echo "##############################################################################################################"
-	echo "# You need .config in /etc/portage/savedconfig/sys-kernel/hardened-sources/ for the savedconfig flag to work #"
-	echo "#             Using the tree flag with USE '-binary -initramfs', will put one in place for you               #"
-	echo "##############################################################################################################"
+	echo "############################################################################################################"
+	echo "# You need .config in /etc/portage/savedconfig/sys-kernel/debian-sources/ for the savedconfig flag to work #"
+	echo "#             Using the tree flag with USE '-binary -initramfs', will put one in place for you             #"
+	echo "############################################################################################################"
 	## need a kill option if this dose not exist
 	rm .config
         restore_config .config
@@ -651,7 +638,7 @@ src_install() {
         --compress=zstd \
         --stdlog=5 \
         --force \
-        --kver 6.1.124-hardened1 \
+        --kver 6.1.124-debian1 \
         --kmoddir ${LIB_MODULES} \
         --fwdir /lib/firmware \
         --early-microcode \
