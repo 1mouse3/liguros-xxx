@@ -8,7 +8,7 @@ inherit check-reqs mount-boot savedconfig toolchain-funcs
 DESCRIPTION="Linux kernel sources with Debian patches."
 HOMEPAGE="https://packages.debian.org/unstable/kernel/"
 LICENSE="GPL-2"
-KEYWORDS="x86 amd64 arm arm64"
+KEYWORDS="~x86 ~amd64 ~arm ~arm64"
 
 SLOT=$(ver_cut 1-2)
 
