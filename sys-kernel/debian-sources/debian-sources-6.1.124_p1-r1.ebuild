@@ -13,7 +13,7 @@ SLOT=$(ver_cut 1-2)
 
 RESTRICT="binchecks strip mirror"
 
-IUSE="binary btrfs clang custom-cflags debug dtrace dmraid ec2 efi efistub +firmware +hardened iscsi initramfs initramfs13  libressl luks lvm makeconfig  mdadm mcelog +microcode multipath NetworkManager nfs nbd plymouth +savedconfig selinux openssl +sign-modules secureboot symlink systemd qemu wireguard xen zfs tree"
+IUSE="binary btrfs clang compact custom-cflags debug dtrace dmraid ec2 efi efistub +firmware grub +hardened iscsi initramfs initramfs13  libressl luks lvm makeconfig  mdadm mcelog +microcode multipath NetworkManager nfs nbd plymouth rEFInd +savedconfig selinux openssl +sign-modules secureboot symlink systemd qemu wireguard xen zfs tree"
 
 REQUIRED_USE="hardened"
 
@@ -169,6 +169,11 @@ SRC_DIR="
 
 S="${WORKDIR}/linux-${DEB_PV_BASE}"
 
+#########################################
+# modules installkernel can run live here
+# @=/usr/lib/kernel/install.d/
+#############################
+
 KERNELTAGS="${DEB_PV_BASE}-debian1"
 KERNELTAG="${DEB_PV_BASE}${MODULE_EXT}"
 D_FILESDIR="${D}/var/db/repos/liguros-xxx/sys-kernel/debian-sources/files"
@@ -213,6 +218,10 @@ get_certs_dir() {
 pkg_pretend() {
 	# Ensure we have enough disk space to compile
 	if use binary ; then
+		###########################
+		# installkernel can do this
+		# ${@}=85-check-diskspace.install
+		################################
 		CHECKREQS_DISK_BUILD="10G"
 		check-reqs_pkg_setup
 	fi
@@ -484,6 +493,8 @@ src_prepare() {
 	# Apply any user patches
 	eapply_user
 
+	${@}=35-amd-microcode-systemd.install
+	${@}=35-intel-microcode-systemd.install
 }
 
 src_test() {
@@ -590,6 +601,7 @@ src_install() {
 	make prepare || die
 	make scripts || die
 
+
 	local TARGETS=( modules_install )
 
         # ARM / ARM64 requires dtb
@@ -667,6 +679,13 @@ src_install() {
         ## udev dose not have time to symlink all items to "/dev/disk/*" and will cause a crash to dracut shell on boot
         ## use "PARTUUID" instead of "UUID" in "/etc/fstab", to get it to boot  and had to manualy edit "grub.cfg" to get gentoo to use this kernel
         ## dont know what is up with dracut on my end, but kept taking a dump after so many variables and could not get these all to run with out failer
+
+	###########################
+	# installkernel can do this
+	${@}=50-dracut.install
+	${@}=51-dracut-rescue.install
+	#############################
+
         $(usex btrfs "-a btrfs" "-o btrfs") \
         $(usex dmraid "-a dmraid -a dm" "-o dmraid") \
         $(usex hardened "-o resume" "-a resume") \
@@ -780,6 +799,20 @@ pkg_postinst() {
 	ewarn "and regenerate your initramfs if you are using ZFS root filesystem"
 	ewarn ""
    fi
+
+	############################################
+	# installkernel can do this but not sure how
+   if use compact; then
+	${@}=90-compact.install
+   fi
+   if use grub; then
+	${@}=91-grub-mkconfg.install
+	sys-kernel/installkernel[gentoo]
+   fi
+   if use rEFInd; then
+	sys-kernel/installkernel[rEFInd]
+   fi
+	################################
 
    if use binary; then
 	if [[ -e /etc/boot.conf ]]; then
