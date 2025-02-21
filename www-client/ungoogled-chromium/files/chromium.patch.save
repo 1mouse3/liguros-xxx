@@ -1,9 +1,6 @@
-Patch to add mold as a option and patched to part broken patches do to missing white space.
-
----
-
+diff '--color=auto' -ru /var/db/repos/pf4public/www-client/ungoogled-chromium/files/bad-font-gc2.patch /pf4/files/bad-font-gc2.patch
 --- a/var/db/repos/pf4public/www-client/ungoogled-chromium/files/bad-font-gc2.patch	2025-02-21 10:17:55.623335167 -0000
-+++ b/var/db/repos/pf4public/www-client/ungoogled-chromium/files/bad-font-gc2.patch	2025-02-18 19:00:10.099962170 -0000
++++ b/var/db/repos/pf4public/www-client/ungoogled-chromium/	2025-02-18 19:00:10.099962170 -0000
 @@ -14,7 +14,7 @@
  #8  0x0000555558ebcdc0 in v8::internal::Heap::PerformGarbageCollection(v8::internal::GarbageCollector, v8::internal::GarbageCollectionReason, char const*) ()
  #9  0x0000555558ecfe14 in v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags)::$_0::operator()() const ()
@@ -13,8 +10,9 @@ Patch to add mold as a option and patched to part broken patches do to missing w
  #11 0x000055555955216b in PushAllRegistersAndIterateStack ()
  #12 0x0000555558eb8c19 in v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags) ()
  #13 0x0000555558eba3eb in v8::internal::Heap::FinalizeIncrementalMarkingAtomically(v8::internal::GarbageCollectionReason) ()
---- a/var/db/repos/pf4public/www-client/ungoogled-chromium/files/disable-bluez-r1.patch	2025-02-21 10:17:55.623335167 -0000
-+++ b/var/db/repos/pf4public/www-client/ungoogled-chromium/files/disable-bluez-r1.patch	2025-02-18 18:58:40.089963265 -0000
+diff '--color=auto' -ru /var/db/repos/pf4public/www-client/ungoogled-chromium/files/disable-bluez-r1.patch /pf4/files/disable-bluez-r1.patch
+--- /var/db/repos/pf4public/www-client/ungoogled-chromium/files/disable-bluez-r1.patch	2025-02-21 10:17:55.623335167 -0000
++++ /pf4/files/disable-bluez-r1.patch	2025-02-18 18:58:40.089963265 -0000
 @@ -9,6 +9,7 @@
  It also breaks WebAuthn: https://github.com/PF4Public/gentoo-overlay/issues/254
  
@@ -23,8 +21,9 @@ Patch to add mold as a option and patched to part broken patches do to missing w
  --- a/headless/lib/browser/headless_browser_main_parts_posix.cc
  +++ b/headless/lib/browser/headless_browser_main_parts_posix.cc
  @@ -25,9 +25,8 @@
---- a/var/db/repos/pf4public/www-client/ungoogled-chromium/files/disable-bluez-r2.patch	2025-02-21 10:17:55.623335167 -0000
-+++ b/var/db/repos/pf4public/www-client/ungoogled-chromium/files/disable-bluez-r2.patch	2025-02-18 18:53:49.789966799 -0000
+diff '--color=auto' -ru /var/db/repos/pf4public/www-client/ungoogled-chromium/files/disable-bluez-r2.patch /pf4/files/disable-bluez-r2.patch
+--- /var/db/repos/pf4public/www-client/ungoogled-chromium/files/disable-bluez-r2.patch	2025-02-21 10:17:55.623335167 -0000
++++ /pf4/files/disable-bluez-r2.patch	2025-02-18 18:53:49.789966799 -0000
 @@ -9,6 +9,7 @@
  It also breaks WebAuthn: https://github.com/PF4Public/gentoo-overlay/issues/254
  
@@ -33,8 +32,9 @@ Patch to add mold as a option and patched to part broken patches do to missing w
  --- a/headless/lib/browser/headless_browser_main_parts_posix.cc
  +++ b/headless/lib/browser/headless_browser_main_parts_posix.cc
  @@ -28,9 +28,8 @@
---- a/var/db/repos/pf4public/www-client/ungoogled-chromium/files/disable-bluez.patch	2025-02-21 10:17:55.623335167 -0000
-+++ b/var/db/repos/pf4public/www-client/ungoogled-chromium/files/disable-bluez.patch	2025-02-18 18:58:51.619963125 -0000
+diff '--color=auto' -ru /var/db/repos/pf4public/www-client/ungoogled-chromium/files/disable-bluez.patch /pf4/files/disable-bluez.patch
+--- /var/db/repos/pf4public/www-client/ungoogled-chromium/files/disable-bluez.patch	2025-02-21 10:17:55.623335167 -0000
++++ /pf4/files/disable-bluez.patch	2025-02-18 18:58:51.619963125 -0000
 @@ -9,6 +9,7 @@
  It also breaks WebAuthn: https://github.com/PF4Public/gentoo-overlay/issues/254
  
@@ -43,8 +43,9 @@ Patch to add mold as a option and patched to part broken patches do to missing w
  --- a/headless/lib/browser/headless_browser_main_parts_posix.cc
  +++ b/headless/lib/browser/headless_browser_main_parts_posix.cc
  @@ -25,9 +25,8 @@
---- a/var/db/repos/pf4public/www-client/ungoogled-chromium/files/ffmpeg-nb_coded_side_data-r1.patch	2025-02-21 10:17:55.623335167 -0000
-+++ b/var/db/repos/pf4public/www-client/ungoogled-chromium/files/ffmpeg-nb_coded_side_data-r1.patch	2025-02-18 18:59:02.499962993 -0000
+diff '--color=auto' -ru /var/db/repos/pf4public/www-client/ungoogled-chromium/files/ffmpeg-nb_coded_side_data-r1.patch /pf4/files/ffmpeg-nb_coded_side_data-r1.patch
+--- /var/db/repos/pf4public/www-client/ungoogled-chromium/files/ffmpeg-nb_coded_side_data-r1.patch	2025-02-21 10:17:55.623335167 -0000
++++ /pf4/files/ffmpeg-nb_coded_side_data-r1.patch	2025-02-18 18:59:02.499962993 -0000
 @@ -6,6 +6,7 @@
  
  
@@ -53,8 +54,9 @@ Patch to add mold as a option and patched to part broken patches do to missing w
  diff --git a/media/ffmpeg/ffmpeg_common.cc b/media/ffmpeg/ffmpeg_common.cc
  index 3c97e4a6cf4c781..a55e4ab51d5b353 100644
  --- a/media/ffmpeg/ffmpeg_common.cc
---- a/var/db/repos/pf4public/www-client/ungoogled-chromium/files/ffmpeg-nb_coded_side_data.patch	2025-02-21 10:17:55.623335167 -0000
-+++ b/var/db/repos/pf4public/www-client/ungoogled-chromium/files/ffmpeg-nb_coded_side_data.patch 2025-02-18 18:59:11.369962885 -0000
+diff '--color=auto' -ru /var/db/repos/pf4public/www-client/ungoogled-chromium/files/ffmpeg-nb_coded_side_data.patch /pf4/files/ffmpeg-nb_coded_side_data.patch
+--- /var/db/repos/pf4public/www-client/ungoogled-chromium/files/ffmpeg-nb_coded_side_data.patch	2025-02-21 10:17:55.623335167 -0000
++++ /pf4/files/ffmpeg-nb_coded_side_data.patch	2025-02-18 18:59:11.369962885 -0000
 @@ -6,6 +6,7 @@
  
  
@@ -63,41 +65,11 @@ Patch to add mold as a option and patched to part broken patches do to missing w
  diff --git a/media/ffmpeg/ffmpeg_common.cc b/media/ffmpeg/ffmpeg_common.cc
  index 3c97e4a6cf4c781..a55e4ab51d5b353 100644
  --- a/media/ffmpeg/ffmpeg_common.cc
---- a/var/db/repos/pf4public/www-client/ungoogled-chromium/files/mold.patch	2025-02-21 10:49:06.910013412 -0000
-+++ /dev/null	2025-02-18 14:50:24.310155089 -0000
-@@ -0,0 +1,30 @@
-+Add use_mold GN arg
-+
-+---
-+
-+--- a/build/config/compiler/BUILD.gn	2025-02-18 12:41:20.130142672 -0000
-++++ b/build/config/compiler/BUILD.gn	2025-02-18 12:48:05.590143322 -0000
-+@@ -384,7 +384,9 @@
-+       }
-+     }
-+ 
-+-    if (use_lld) {
-++    if (use_mold) {
-++      ldflags += [ "-fuse-ld=mold" ]
-++    } else if (use_lld) {
-+       ldflags += [ "-fuse-ld=lld" ]
-+       if (lld_path != "") {
-+         ldflags += [ "-B$lld_path" ]
-+--- a/build/config/compiler/compiler.gni	2025-02-18 12:41:47.360142716 -0000
-++++ b/build/config/compiler/compiler.gni	2025-02-18 12:50:53.910143592 -0000
-+@@ -32,6 +32,10 @@
-+   # The default linker everywhere else.
-+   use_lld = is_clang && current_os != "zos"
-+ 
-++  # Set to true to use the mold linker on the system
-++
-++  use_mold = false
-++
-+   # If true, optimize for size.
-+   # Default to favoring speed over size for platforms not listed below.
-+   optimize_for_size =
---- a/var/db/repos/pf4public/www-client/ungoogled-chromium/ungoogled-chromium-133.0.6943.98_p1.ebuild	2025-02-21 10:17:55.623335167 -0000
-+++ b/var/db/repos/pf4public/www-client/ungoogled-chromium/ungoogled-chromium-133.0.6943.98_p1.ebuild	2025-02-21 10:26:01.973337494 -0000
+Only in /pf4/files: mold.patch
+Only in /var/db/repos/pf4public/www-client/ungoogled-chromium/: ungoogled-chromium-133.0.6943.126_p1.ebuild
+diff '--color=auto' -ru /var/db/repos/pf4public/www-client/ungoogled-chromium/ungoogled-chromium-133.0.6943.98_p1.ebuild /pf4/ungoogled-chromium-133.0.6943.98_p1.ebuild
+--- /var/db/repos/pf4public/www-client/ungoogled-chromium/ungoogled-chromium-133.0.6943.98_p1.ebuild	2025-02-21 10:17:55.623335167 -0000
++++ /pf4/ungoogled-chromium-133.0.6943.98_p1.ebuild	2025-02-21 10:26:01.973337494 -0000
 @@ -37,7 +37,7 @@
  SLOT="0"
  KEYWORDS="amd64 ~arm64 ~ppc64 ~x86"
