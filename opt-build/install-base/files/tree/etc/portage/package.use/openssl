@@ -1,0 +1,8 @@
+net-misc/curl -openssl curl_ssl_gnutls -curl_ssl_openssl  curl_quic_ngtcp2  -curl_quic_openssl gnutls
+sys-fs/cryptsetup libressl openssl
+sys-apps/coreutils -openssl
+app-arch/libarchive libressl
+dev-qt/qtbase libressl
+dev-lang/python libressl ssl
+net-libs/gnutls -openssl
+#dev-lang/python -ssl

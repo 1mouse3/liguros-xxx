@@ -1,0 +1,3 @@
+dev-python/pyqt6 -bluetooth
+cat/pkg -bluetooth
+=cat/other-pkg-0.0* -bluetooth

@@ -1,0 +1,4 @@
+*/* opengl
+
+cat/pkg -opengl
+=cat/other-pkg-0.0* -opengl

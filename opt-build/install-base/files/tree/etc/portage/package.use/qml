@@ -1,0 +1,9 @@
+*/* -qml
+
+dev-qt/qt5compat qml
+dev-qt/qtpositioning -qml
+dev-qt/qtpositioning -qml
+cat/pkg qml
+=cat/other-pkg-0.0* qml
+>=kde-frameworks/sonnet-6.5.0 qml
+dev-python/pyqt6 qml

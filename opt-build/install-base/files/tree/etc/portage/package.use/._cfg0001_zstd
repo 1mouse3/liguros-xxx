@@ -1,0 +1,10 @@
+net-misc/rsync zstd
+app-arch/libarchive zstd
+dev-libs/boost zstd
+# required by kde-frameworks/kauth-5.116.0::liguros-repo[policykit]
+# required by kde-frameworks/kconfigwidgets-5.116.0::liguros-repo
+# required by kde-frameworks/kiconthemes-5.116.0::liguros-repo
+# required by kde-plasma/polkit-kde-agent-5.27.11::liguros-repo
+# required by sys-auth/polkit-123-r1::liguros-repo[kde]
+# required by sys-auth/elogind-255.5-r1::liguros-repo[policykit]
+>=sys-auth/polkit-qt-0.200.0 qt5

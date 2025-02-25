@@ -1,0 +1,5 @@
+#*/* debug
+
+sys-kernel/gentoo-kernel -debug
+cat/pkg -debug
+=cat/other-pkg-0.0* -debug

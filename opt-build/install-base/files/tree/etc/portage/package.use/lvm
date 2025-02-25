@@ -1,0 +1,3 @@
+sys-fs/udisks -lvm
+sys-libs/libblockdev -lvm
+sys-kernel/debian-sources -lvm

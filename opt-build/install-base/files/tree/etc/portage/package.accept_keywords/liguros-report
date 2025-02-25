@@ -1,0 +1,52 @@
+sys-firmware/alsa-firmware::liguros-repo freedist
+dev-perl/MooseX-Types-JSON ~amd64
+dev-libs/libsfdo::liguros-repo ~amd64 BSD-2
+net-misc/rsync::liguros-repo
+net-libs/gnutls::liguros-repo
+dev-lang/ruby::liguros-repo
+sec-keys/openpgp-keys-libressl::liguros-repo
+media-video/pipewire::liguros-repo
+dev-libs/libressl::liguros-repo
+app-admin/sudo::liguros-repo
+app-admin/syslog-ng::liguros-repo
+app-arch/libarchive::liguros-repo
+app-crypt/qca::liguros-repo
+app-crypt/rhash::liguros-repo
+app-crypt/sbsigntools::liguros-repo
+app-portage/getuto::liguros-repo
+app-text/mupdf::liguros-repo
+app-text/qpdf::liguros-repo
+dev-db/mysql-connector-c::liguros-repo
+#dev-lang/python::liguros-repo ~amd64
+dev-lang/rust-bin::liguros-repo
+dev-lang/python::liguros-repo ~amd64
+dev-libs/libevent::liguros-repo
+dev-libs/libgit2::liguros-repo
+dev-perl/Net-SSLeay::liguros-repo
+dev-python/cryptography::liguros-repo
+dev-qt/qtbase::liguros-repo
+dev-qt/qtnetwork::liguros-repo
+dev-util/cargo-c::liguros-repo
+dev-util/maturin::liguros-repo
+dev-vcs/git::liguros-repo
+media-video/pipewire::liguros-repo
+net-libs/libssh2::liguros-repo
+net-libs/nodejs::liguros-repo
+net-misc/curl::liguros-repo
+net-misc/rsync::liguros-repo
+net-misc/wget::liguros-repo
+net-wireless/hostapd::liguros-repo
+sys-apps/coreutils::liguros-repo
+sys-apps/kmod::liguros-repo
+sys-boot/grub::liguros-repo
+sys-boot/mokutil::liguros-repo
+sys-boot/refind::liguros-repo
+sys-fs/cryptsetup::liguros-repo
+sys-kernel/gentoo-kernel::liguros-repo
+sys-libs/libnvme::liguros-repo
+www-client/links::liguros-repo
+www-client/lynx::liguros-repo
+x11-base/xorg-server::liguros-repo
+x11-base/xwayland::liguros-repo
+x11-drivers/nvidia-drivers::liguros-repo
+virtual/perl-File-Spec::liguros-repo

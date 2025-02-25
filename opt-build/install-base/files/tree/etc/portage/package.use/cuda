@@ -1,0 +1,4 @@
+*/* -cuda
+
+cat/pkg cuda
+=cat/other-pkg-0.0* cuda

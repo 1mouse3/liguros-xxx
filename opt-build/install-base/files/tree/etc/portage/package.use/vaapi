@@ -1,0 +1,5 @@
+*/* vaapi
+
+#cat/pkg -vaapi
+#=cat/other-pkg-0.0* -vaapi
+media-video/vlc -vaapi -gui

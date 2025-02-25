@@ -1,0 +1,2 @@
+app-eselect/eselect-luajit::liguros-repo ~amd64 
+dev-lua/lua-cjson::liguros-repo ~amd64 

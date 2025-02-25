@@ -1,0 +1,4 @@
+*/* vdpau
+
+#cat/pkg -vdpau
+#=cat/other-pkg-0.0* -vdpau

@@ -1,0 +1,3 @@
+*/* -dnstap
+
+net-dns/knot-resolver dnstap nghttp2 verify-sig -prometheus

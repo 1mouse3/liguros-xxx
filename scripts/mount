@@ -1,0 +1,30 @@
+#!/bin/bash
+# chroot mount script
+
+
+#mount /dev/sdb1 /mnt/gentoo
+
+mount -t proc /proc ./proc
+
+mount --rbind /sys ./sys
+
+mount --make-rslave ./sys
+
+mount --rbind /dev ./dev
+
+mount --make-rslave ./dev
+
+mount --bind /run ./run
+
+mount --make-slave ./run
+
+#mount /dev/sdc2 /mnt/gentoo/home
+
+#mount /dev/sdc4 /mnt/gentoo/boot
+
+chroot ./ /bin/bash
+#&& source /etc/profile & export PS1="(chroot) ${PS1}"
+
+umount -l ./dev{/shm,/pts,}
+
+umount -l .{/proc,/sys}

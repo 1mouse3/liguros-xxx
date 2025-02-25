@@ -1,0 +1,4 @@
+cross-x86_64-linux-gnu/binutils -multilib
+cross-x86_64-linux-gnu/linux-headers -selinux -multilib
+cross-x86_64-linux-gnu/glibc static-libs cet -selinux -libraries -multilib
+cross-x86_64-linux-gnu/gcc -sanitize -vtv cet -selinux -d -objc -objc++ -objc-gc -vtv -sanitize -multilib

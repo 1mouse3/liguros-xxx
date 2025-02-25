@@ -1,0 +1,4 @@
+*/* widgets
+
+cat/pkg -widgets
+=cat/other-pkg-0.0* -widgets

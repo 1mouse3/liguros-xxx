@@ -1,0 +1,5 @@
+*/* -quick
+
+cat/pkg quick
+=cat/other-pkg-0.0* quick
+dev-python/pyside6 quick

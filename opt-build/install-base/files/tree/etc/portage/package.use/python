@@ -1,0 +1,41 @@
+*/* -python_targets_pypy3 -python_targets_python3_9 -python_targets_python3_10 -python_targets_python3_11 python_targets_python3_12 -python_targets_python3_13 -python_targets_pypy3
+dev-lang/* -python_targets_pypy3 -python_targets_python3_9 -python_targets_python3_10 python_targets_python3_12 -python_targets_python3_13 -python_targets_python3_11 -python_targets_pypy3
+dev-python/* -python_targets_pypy3  -python_targets_python3_10 python_targets_python3_12 -python_targets_python3_13 -python_targets_python3_11 -python_targets_pypy3
+sys-fs/zfs -python -python_targets_python3_10 python_targets_python3_12 -python_targets_python3_13 -python_targets_python3_11 -python_targets_pypy3
+sys-apps/* python_targets_python3_12 -python_targets_python3_11
+app-portage/* python_targets_python3_12 -python_targets_python3_11
+app-portage/unsymlink-lib python_targets_python3_12
+sys-apps/portage python_targets_python3_12
+sys-apps/file python_targets_python3_12
+dev-python/pathspec -python_targets_python3_9
+dev-python/pluggy -python_targets_python3_9
+dev-python/trove-classifiers -python_targets_python3_9
+dev-python/hatchling -python_targets_python3_9
+dev-python/hatch-vcs -python_targets_python3_9
+sys-process/audit -python_targets_python3_9
+dev-python/dbus-python python_targets_python3_9
+dev-build/meson -python_targets_python3_9
+dev-python/numpy -python_targets_python3_9
+dev-python/cryptography -python_targets_python3_9
+dev-python/secretstorage -python_targets_python3_9
+dev-python/keyring -python_targets_python3_9
+dev-python/poetry -python_targets_python3_9
+
+media-libs/lilv python
+app-crypt/gpgme python
+media-gfx/graphviz python
+sys-apps/util-linux python
+app-admin/syslog-ng python
+dev-libs/libxslt python
+app-misc/pax-utils python
+dev-libs/libnl python
+dev-libs/boost python
+sys-apps/file python
+media-libs/alsa-lib python
+sys-libs/libseccomp python
+net-dns/avahi python
+sys-libs/libnvme python
+net-firewall/nftables python
+sys-apps/i2c-tools python
+dev-libs/libbytesize python
+app-arch/brotli python

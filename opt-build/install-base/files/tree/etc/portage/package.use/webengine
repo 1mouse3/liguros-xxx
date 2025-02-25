@@ -1,0 +1,4 @@
+*/* -webengine
+
+cat/pkg webengine
+=cat/other-pkg-0.0* webengine

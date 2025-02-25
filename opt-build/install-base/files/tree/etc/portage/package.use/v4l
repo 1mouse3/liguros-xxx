@@ -1,0 +1,4 @@
+*/* v4l
+
+cat/pkg -v4l
+=cat/other-pkg-0.0* -v4l

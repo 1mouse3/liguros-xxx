@@ -1,0 +1,4 @@
+*/* motif
+
+cat/pkg -motif
+=cat/other-pkg-0.0* -motif

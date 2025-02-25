@@ -1,0 +1,4 @@
+*/* egl
+
+cat/pkg -egl
+=cat/other-pkg-0.0* -egl

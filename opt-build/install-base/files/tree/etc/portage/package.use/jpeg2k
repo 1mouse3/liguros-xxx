@@ -1,0 +1,4 @@
+*/* jpeg2k
+
+cat/pkg -jpeg2k
+=cat/other-pkg-0.0* -jpeg2k

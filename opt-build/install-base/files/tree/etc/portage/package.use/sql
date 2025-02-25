@@ -1,0 +1,4 @@
+*/* sql
+
+cat/pkg -sql
+=cat/other-pkg-0.0* -sql

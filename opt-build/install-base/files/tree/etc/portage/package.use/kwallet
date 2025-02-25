@@ -1,0 +1,4 @@
+*/* -kwallet
+
+cat/pkg kwallet
+=cat/other-pkg-0.0* kwallet

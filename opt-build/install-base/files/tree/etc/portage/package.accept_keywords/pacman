@@ -1,0 +1,3 @@
+sys-apps/pacman-mirrorlist
+sys-apps/pacman
+app-crypt/archlinux-keyring ~amd64

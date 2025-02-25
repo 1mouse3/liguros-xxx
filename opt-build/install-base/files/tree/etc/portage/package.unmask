@@ -1,0 +1,4 @@
+x11-drivers/nvidia-drivers:0/470
+virtual/perl-File-Spec::gentoo
+dev-python/fido2::gentoo
+

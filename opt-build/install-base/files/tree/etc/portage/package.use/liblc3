@@ -1,0 +1,4 @@
+*/* liblc3
+
+cat/pkg -liblc3
+=cat/other-pkg-0.0* -liblc3

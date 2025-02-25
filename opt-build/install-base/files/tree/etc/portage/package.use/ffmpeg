@@ -1,0 +1,4 @@
+*/* ffmpeg
+
+cat/pkg -ffmpeg
+=cat/other-pkg-0.0* -ffmpeg

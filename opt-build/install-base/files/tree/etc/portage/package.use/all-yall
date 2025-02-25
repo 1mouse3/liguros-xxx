@@ -1,0 +1,11 @@
+# base use flags #
+*/* elogind caps audit split-usr sensors kde truetype fontconfig qt6
+
+# network/storage #
+*/* json lvm cups io-uring hostonly rpc nss chromium
+
+# audio/video use flags #
+*/* pulseaudio rav1e svt-av1 nvenc vulkan aom opus vpx quick quick3d lvm gts openal openh264 libaom libdrm
+
+# not use flags #
+*/* -video_cards_vesa -qt5 -llvm

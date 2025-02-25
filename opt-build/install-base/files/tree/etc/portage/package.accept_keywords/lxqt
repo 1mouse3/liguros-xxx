@@ -1,0 +1,26 @@
+lxqt-base/* ~amd64
+mediagfx/lximage-qt ~amd64
+media-gfx/lximage-qt ~amd64
+x11-libs/libfm-qt ~amd64
+x11-misc/obconf-qt ~amd64
+x11-misc/pcmanfm-qt ~amd64
+dev-util/lxqt-build-tools ~amd64
+dev-libs/libqtxdg ~amd64
+x11-themes/lxqt-themes ~amd64
+gui-libs/xdg-desktop-portal-lxqt ~amd64
+x11-misc/qps ~amd64
+x11-terms/qterminal ~amd64
+x11-terms/xterm ~amd64
+gnome-base/gvfs ~amd64
+dev-qt/qttranslations ~amd64
+app-arch/lxqt-archiver ~amd64
+x11-libs/qtermwidget ~amd64
+x11-misc/screengrab ~amd64
+x11-misc/sddm ~amd64
+app-misc/qtxdg-tools ~amd64
+app-alternatives/ninja
+dev-build/cmake ~amd64
+sys-process/procps ~amd64
+virtual/libudev ~amd64
+x11-misc/xdg-user-dirs ~amd64
+dev-libs/libdbusmenu-lxqt ~amd64

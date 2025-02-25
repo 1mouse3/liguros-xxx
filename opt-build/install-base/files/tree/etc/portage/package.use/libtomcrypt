@@ -1,0 +1,2 @@
+net-dialup/accel-ppp libtomcrypt
+net-misc/chrony libtomcrypt

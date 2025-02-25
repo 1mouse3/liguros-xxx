@@ -1,0 +1,4 @@
+*/* xml
+
+cat/pkg -xml
+=cat/other-pkg-0.0* -xml

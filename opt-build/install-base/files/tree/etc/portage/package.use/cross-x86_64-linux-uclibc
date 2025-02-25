@@ -1,0 +1,2 @@
+cross-x86_64-linux-uclibc/binutils -multilib
+cross-x86_64-linux-uclibc/gcc -sanitize -vtv cet objc -objc++ -objc-gc -selinux -d -objc -objc++ -objc-gc -vtv -fortran -go -jit -cxx -openmp -sanitize -zstd -zlib -multilib

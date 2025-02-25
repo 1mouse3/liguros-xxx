@@ -1,0 +1,5 @@
+*/* -gtk
+
+cat/pkg gtk
+=cat/other-pkg-0.0* gtk
+gnome-base/librsvg -gtk-doc

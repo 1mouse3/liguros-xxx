@@ -1,0 +1,4 @@
+*/* lv2
+
+cat/pkg -lv2
+=cat/other-pkg-0.0* -lv2

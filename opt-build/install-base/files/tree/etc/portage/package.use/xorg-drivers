@@ -1,0 +1,1 @@
+x11-base/xorg-drivers VIDEO_CARDS: -* nvidia nouveau vesa fbdev

@@ -1,0 +1,3 @@
+dev-db/sqlite icu
+sys-fs/xfsprogs icu
+dev-qt/qtbase icu

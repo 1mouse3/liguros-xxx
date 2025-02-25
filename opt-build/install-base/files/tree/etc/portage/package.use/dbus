@@ -1,0 +1,5 @@
+*/* dbus
+
+kde-frameworks/kcoreaddons dbus
+cat/pkg -dbus
+=cat/other-pkg-0.0* -dbus

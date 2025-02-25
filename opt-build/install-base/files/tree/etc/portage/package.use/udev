@@ -1,0 +1,9 @@
+x11-base/xorg-server udev
+dev-qt/qtbase udev
+sys-fs/cryptsetup udev
+lxqt-base/lxqt-session udev
+sys-fs/lvm2 -udev
+sys-apps/util-linux udev
+dev-libs/libusb -udev
+virtual/libusb -udev
+sys-apps/pciutils -udev

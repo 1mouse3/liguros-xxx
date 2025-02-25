@@ -9,6 +9,6 @@ KEYWORDS="amd64 ~arm arm64 ~hppa ~ppc ppc64 ~riscv ~sparc x86"
 
 RDEPEND="
         || (
-		~sys-kernel/hardened-sources-6.1.124_p1-r1
+		~sys-kernel/debian-sources-6.1.124_p1-r1
         )
 "

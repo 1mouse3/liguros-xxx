@@ -1,0 +1,4 @@
+*/* contribxfeatures2d
+
+cat/pkg -contribxfeatures2d
+=cat/other-pkg-0.0* -contribxfeatures2d

@@ -1,0 +1,4 @@
+*/* gsettings
+
+cat/pkg -gsettings
+=cat/other-pkg-0.0* -gsettings

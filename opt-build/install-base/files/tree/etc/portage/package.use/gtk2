@@ -1,0 +1,4 @@
+*/* -gtk2
+
+cat/pkg gtk2
+=cat/other-pkg-0.0* gtk2

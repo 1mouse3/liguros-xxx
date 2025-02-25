@@ -1,0 +1,26 @@
+
+=== [92mEnabled Profiles[0m: ===
+
+[1m        arch[0m: [94mamd64[0m
+[1m     subarch[0m: [94mintel64-skylake-avx512[0m
+[1m       build[0m: [94mcurrent[0m
+[1m      flavor[0m: [94mcore[0m
+[1m     mix-ins[0m: [94mlibressl[0m
+[1m     mix-ins[0m: [94mno-systemd[0m
+[1m     mix-ins[0m: [94mlxqt[0m
+[1m     mix-ins[0m: [94mno-multilib[0m
+[1m     mix-ins[0m: [94mnetworkmanager[0m
+[1m     mix-ins[0m: [94mfirmware[0m
+[1m     mix-ins[0m: [94mgfxcard-nvidia[0m
+[1m     mix-ins[0m: [94mselinux[0m
+
+=== [92mAll inherited from mix-in lxqt[0m ===
+
+[1m                                    flavor/desktop[0m
+[1m                                       mix-ins/x11[0m
+[1m                                        mix-ins/qt[0m
+[1m                                     mix-ins/audio[0m
+[1m                                     mix-ins/video[0m
+[1m                                  mix-ins/graphics[0m
+[1m                                     mix-ins/media[0m
+[1m                                     mix-ins/print[0m

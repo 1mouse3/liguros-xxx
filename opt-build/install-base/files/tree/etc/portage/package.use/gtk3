@@ -1,0 +1,4 @@
+*/* -gtk3
+
+cat/pkg gtk3
+=cat/other-pkg-0.0* gtk3

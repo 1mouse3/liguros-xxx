@@ -1,0 +1,102 @@
+sys-devel/gcc -objc -objc++ -objc-gc -lto -nls -sanitize
+*/* -multilib
+*/* systemtap
+*/* zstd
+*/* pulseaudio
+*/* iscsi
+*/* nfs
+*/* -bluetooth
+sys-auth/polkit kde
+dev-qt/qtmultimedia alsa
+dev-qt/qtbase mysql -sqlite icu -nls vulkan
+net-misc/curl -websockets
+app-emulation/qemu udev
+sys-apps/hwloc -video_cards_nvidia
+x11-base/xorg-drivers -video_cards_nvidia -video_cards_vesa video_cards_nouveau
+net-misc/connman -bluetooth -wifi -nftables iptables networkmanager  policykit
+dev-java/openjdk-bin cups
+sys-libs/glibc -multiarch -multilib -stack-realign
+media-video/mpv pulseaudio
+lxqt-base/lxqt-panel pulseaudio lm-sensors networkmonitor
+media-libs/mesa lm-sensors
+media-sound/qsynth pulseaudio
+media-sound/mpg123-base alsa pulseaudio
+media-sound/mpg123 alsa pulseaudio
+media-sound/fluidsynth pulseaudio
+media-libs/libao alsa pulseaudio
+app-emulation/qemu alsa pulseaudio -jack
+app-text/ghostscript-gpl cups
+sys-apps/busybox  make-symlinks mded savedconfig
+net-wireless/bluez cups
+media-video/ffmpeg pulseaudio
+sys-apps/busybox mdev
+app-editors/emacs alsa
+media-libs/mesa -llvm
+media-gfx/photoqt -imagemagick
+sys-fs/lvm2 lvm
+media-video/vlc pulseaudio
+media-sound/sox pulseaudio
+dev-cpp/eigen boost
+net-libs/nodejs -inspector
+virtual/udev systemd
+dev-libs/boost lzma mpi numpy tools
+virtual/mpi abi_x86_64 cxx threads
+app-editors/tea qt6
+media-sound/qsynth qt6
+dev-build/cmake qt6 -gui
+sys-auth/polkit -qt5
+sys-auth/polkit-qt -qt5
+dev-qt/qtbase vulkan
+dev-qt/qtwayland vulkan
+dev-qt/qtdeclarative vulkan
+dev-qt/qtquick3d vulkan
+media-libs/mesa vulkan
+dev-qt/qtwayland vulkan
+dev-qt/qtmultimedia vulkan
+dev-qt/qtgui vulkan
+media-libs/mesa -llvm_slot_19 -llvm_slot_18
+dev-qt/qttools -llvm_slot_19 -llvm_slot_18
+dev-lang/python -llvm_slot_19 -llvm_slot_18
+dev-libs/mpdecimal cxx
+dev-libs/boehm-gc cxx
+dev-libs/json threads
+sys-apps/haveged threads
+media-sound/fluidsynth threads
+app-arch/libarchive lzo blake2
+sys-cluster/openmpi cxx
+kde-plasma/kwin -handbook -lock -screencast -shortcuts -accessibility
+dev-qt/qttools vulkan -assistant -pixeltool -qtplugininfo
+dev-libs/glib elf introspection
+media-video/wireplumber
+media-video/pipewire -gsettings -roc -echo-cancel -modemmanager -bluetooth -zeroconf -v41 -ieee1394  -X -liblc3 elogind
+kde-frameworks/kjobwidgets -X
+kde-frameworks/kio -X
+sys-fs/udisk introspection
+media-libs/libv41 -jpeg
+net-print/cups -zeroconf
+sys-apps/groff -X
+sys-apps/shadow -split-usr
+sys-libs/pam -filecaps
+gnome-base/librsvg -vala
+media-video/ffmpeg -jack -fontconfig -truetype
+dev-debug/systemtap -sqlite -zeroconf
+app-crypt/pinentry -X
+dev-python/pillow -truetype
+app-crypt/gnupg -tofu -nls -smartcard
+dev-libs/boost -nls
+lxqt-base/lxqt-meta -nls
+dev-libs/json-glib -nls
+net-libs/libpsl -idn
+www-client/ungoogled-chromium -clang system-jsoncpp -system-ffmpeg -hevc -nvidia
+dev-lang/python sqlite
+dev-libs/libusb -udev
+sys-apps/pciutils -udev
+sys-kernel/installkernel grub
+sys-fs/lvm2 static -udev
+net-misc/networkmanager -modemmanager -ppp -wifi -wext -nss -gtk-doc gnutls policykit dhcpcd iptables
+kde-plasma/plasma-nm openconnect
+x11-base/xorg-server xcsecurity
+x11-base/xorg-drivers -input_devices_synaptics -video_cards_vesa -video_cards_nvidia
+sys-devil/binutils -nls
+sys-apps/iproute2 -minimal
+sys-apps/dbus elogind

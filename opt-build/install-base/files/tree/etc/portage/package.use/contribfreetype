@@ -1,0 +1,4 @@
+*/* contribfreetype
+
+cat/pkg -contribfreetype
+=cat/other-pkg-0.0* -contribfreetype

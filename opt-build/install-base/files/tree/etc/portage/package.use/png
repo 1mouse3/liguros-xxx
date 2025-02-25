@@ -1,0 +1,4 @@
+*/* png
+
+cat/pkg -png
+=cat/other-pkg-0.0* -png

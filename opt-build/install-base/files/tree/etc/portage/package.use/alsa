@@ -1,0 +1,15 @@
+media-sound/qpwgraph alsa
+dev-java/openjdk-bin alsa
+media-libs/libsndfile alsa
+media-video/ffmpeg alsa
+media-sound/jack-example-tools alsa
+media-sound/fluidsynth alsa
+# ?
+media-sound/mpg123-base alsa
+app-editors/emacs alsa
+dev-qt/qtmultimedia alsa
+media-video/vlc alsa
+media-libs/gst-plugins-base alsa
+media-libs/openal alsa
+sec-policy/selinux-chromium alsa
+sys-firmware/alsa-firmware -maestro3 -ymfpci usb-usx2y

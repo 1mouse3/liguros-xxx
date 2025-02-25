@@ -1,0 +1,50 @@
+# created by eselect-repo
+
+[pf4public]
+location = /var/db/repos/pf4public
+sync-type = git
+sync-uri = https://github.com/gentoo-mirror/pf4public.git
+auto-sync = yes
+
+[deepin]
+location = /var/db/repos/deepin
+sync-type = git
+sync-uri = https://github.com/zhtengw/deepin-overlay.git
+auto-sync = yes
+
+[wayland-desktop]
+location = /var/db/repos/wayland-desktop
+sync-type = git
+sync-uri = https://github.com/gentoo-mirror/wayland-desktop.git
+
+[gentoo-zh]
+location = /var/db/repos/gentoo-zh
+sync-type = git
+sync-uri = https://github.com/gentoo-mirror/gentoo-zh.git
+
+[example_repository]
+location = /var/db/repos/example_repository
+
+[brother-overlay]
+location = /var/db/repos/brother-overlay
+sync-type = git
+sync-uri = https://github.com/gentoo-mirror/brother-overlay.git
+
+[dm9pZCAq]
+location = /var/db/repos/dm9pZCAq
+sync-type = git
+sync-uri = https://github.com/gentoo-mirror/dm9pZCAq.git
+
+
+[tmpfilesd]
+location = /var/db/repos/tmpfilesd/sys-apps/tmpfilesd
+
+[without-systemd]
+location = /var/db/repos/without-systemd
+sync-type = git
+sync-uri = https://github.com/KenjiBrown/without-systemd.git
+
+[liguros-report]
+location = /var/db/repos/liguros-report
+sync-type = git
+sync-uri = https://gitlab.com/liguros/liguros-repo.git

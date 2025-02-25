@@ -1,0 +1,5 @@
+dev-python/cryptography::liguros-repo
+dev-qt/qtbase::liguros-repo
+>sys-kernel/linux-headers-6.2
+>sys-kernel/linux-headers-6.10
+>sys-fs/xfsprogs-6.12

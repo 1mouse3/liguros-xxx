@@ -1,0 +1,6 @@
+*/* nvidia
+
+cat/pkg -nvidia
+=cat/other-pkg-0.0* -nvidia
+
+x11-drivers/nvidia-drivers static-libs

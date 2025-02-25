@@ -1,0 +1,4 @@
+*/* desktop-utils
+
+cat/pkg -desktop-utils
+=cat/other-pkg-0.0* -desktop-utils

@@ -1,0 +1,4 @@
+virtual/udev::liguros-repo
+sys-fs/eudev::liguros-repo
+dev-qt/qtbase::libressl
+virtual/libudev::without-systemd

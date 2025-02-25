@@ -1,0 +1,4 @@
+*/* pipewire-alsa 
+
+cat/pkg -pipewire-alsa 
+=cat/other-pkg-0.0* -pipewire-alsa 

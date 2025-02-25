@@ -1,0 +1,5 @@
+#!/bin/bash
+# dracut script
+
+
+dracut -v --force --stdlog=5 --kver 6.1.124-debian1 --early-microcode --add-fstab /etc/fstab --fstab --add-drivers "nvidia nvidia-uvm nvidia-peermem nvidia-modeset nvidia-drm"  --lvmconf /boot/initramfs-6.1.124-debian1.img

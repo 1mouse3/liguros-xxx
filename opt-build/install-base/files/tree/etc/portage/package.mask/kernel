@@ -1,0 +1,3 @@
+sys-kernel/gentoo-kernel
+virtual/dist-kernel::liguros-repo
+virtual/linux-sources::liguros-repo

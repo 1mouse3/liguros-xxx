@@ -1,0 +1,5 @@
+sys-devel/binutils hardened
+dev-lang/python hardened
+sys-kernel/debian-sources hardened
+sys-kernel/hardened-sources hardened
+sys-devel/gcc hardened

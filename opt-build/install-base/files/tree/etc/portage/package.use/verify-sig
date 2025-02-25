@@ -1,0 +1,8 @@
+sys-libs/ncurses verify-sig
+sys-libs/readline verify-sig
+sys-apps/util-linux verify-sig
+dev-lang/python verify-sig
+dev-libs/libressl verify-sig
+sys-devel/gettext verify-sig
+net-misc/openssh verify-sig
+sys-libs/zlib verify-sig

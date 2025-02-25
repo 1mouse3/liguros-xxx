@@ -1,0 +1,4 @@
+*/* sound-server
+
+cat/pkg -sound-server
+=cat/other-pkg-0.0* -sound-server

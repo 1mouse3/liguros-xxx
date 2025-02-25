@@ -1,0 +1,4 @@
+*/* extra
+
+cat/pkg -extra
+=cat/other-pkg-0.0* -extra

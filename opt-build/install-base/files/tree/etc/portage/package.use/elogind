@@ -1,0 +1,11 @@
+*/* -elogind
+
+dev-lua/lua-cjson lua_single_target_luajit -lua_single_target_lua5-1 -lua_single_target_lua5-4
+media-video/wireplumber elogind lua_single_target_luajit -lua_single_target_lua5-1 -lua_single_target_lua5-4
+#sys-process/procps elogind
+#x11-base/xorg-server elogind
+#dev-libs/boost elogind
+#sys-fs/udisks elogind
+#sys-auth/pambase elogind
+#cat/pkg elogind
+#=cat/other-pkg-0.0* elogind

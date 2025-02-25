@@ -1,0 +1,4 @@
+*/* -webchannel
+
+cat/pkg webchannel
+=cat/other-pkg-0.0* webchannel

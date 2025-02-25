@@ -1,0 +1,4 @@
+*/* zeroconf
+
+cat/pkg -zeroconf
+=cat/other-pkg-0.0* -zeroconf

@@ -1,0 +1,4 @@
+cross--l/linux-headers cross--l/linux-headers.conf
+cross--l/binutils cross--l/binutils.conf
+cross--l/gcc cross--l/gcc.conf
+cross--l/gdb cross--l/gdb.conf

@@ -1,0 +1,4 @@
+sys-libs/pam -debug
+sys-apps/util-linux pam
+net-misc/openssh -pam
+net-print/cups -pam

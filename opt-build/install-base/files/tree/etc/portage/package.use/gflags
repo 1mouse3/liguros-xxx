@@ -1,0 +1,4 @@
+*/* gflags
+
+cat/pkg -gflags
+=cat/other-pkg-0.0* -gflags

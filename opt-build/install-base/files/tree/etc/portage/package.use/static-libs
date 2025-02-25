@@ -1,0 +1,11 @@
+*/* static-libs
+sys-apps/pciutils -static-libs
+media-video/ffmpeg static-libs
+sys-libs/libselinux static-libs
+dev-libs/libpcre2 static-libs
+virtual/libcrypt static-libs
+sys-libs/libxcrypt static-libs
+sys-fs/lvm2 static-libs static
+sys-fs/cryptsetup static-libs
+
+#net-misc/openssh static

@@ -1,0 +1,14 @@
+# required by x11-drivers/nvidia-drivers (argument)
+x11-drivers/nvidia-drivers NVIDIA-r2
+sys-firmware/nvidia-firmware NVIDIA-r2
+# required by sys-kernel/genkernel-4.3.6::gentoo[firmware]
+# required by genkernel (argument)
+=sys-kernel/linux-firmware-20231211 linux-fw-redistributable
+sys-kernel/linux-firmware @BINARY-REDISTRIBUTABLE
+sys-kernel/linux-firmware @BINARY-REDISTRIBUTABLE
+sys-firmware/intel-microcode @BINARY-REDISTRIBUTABLE
+#
+app-arch/unrar unRAR
+# brother
+net-print/brother-genml1-bin  brother-eula
+dev-libs/libsfdo "BSD 2-Clause Simplified License"

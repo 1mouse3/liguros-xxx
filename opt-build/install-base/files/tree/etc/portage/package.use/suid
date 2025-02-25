@@ -1,0 +1,4 @@
+*/* suid
+
+cat/pkg -suid
+=cat/other-pkg-0.0* -suid

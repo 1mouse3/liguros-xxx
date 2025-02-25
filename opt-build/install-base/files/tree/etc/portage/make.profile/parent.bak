@@ -1,0 +1,7 @@
+liguros-repo:liguros/1.0/linux-gnu/arch/amd64
+liguros-repo:liguros/1.0/linux-gnu/arch/amd64/subarch/intel64-skylake-avx512
+liguros-repo:liguros/1.0/linux-gnu/build/current
+liguros-repo:liguros/1.0/linux-gnu/flavor/core
+liguros-repo:liguros/1.0/linux-gnu/mix-ins/libressl
+liguros-repo:liguros/1.0/linux-gnu/mix-ins/no-systemd
+liguros-repo:liguros/1.0/linux-gnu/mix-ins/lxqt

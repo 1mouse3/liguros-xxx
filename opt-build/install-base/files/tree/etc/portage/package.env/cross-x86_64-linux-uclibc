@@ -1,0 +1,5 @@
+cross-x86_64-linux-uclibc/linux-headers cross-x86_64-linux-uclibc/linux-headers.conf
+cross-x86_64-linux-uclibc/uclibc-ng cross-x86_64-linux-uclibc/uclibc-ng.conf
+cross-x86_64-linux-uclibc/binutils cross-x86_64-linux-uclibc/binutils.conf
+cross-x86_64-linux-uclibc/gcc cross-x86_64-linux-uclibc/gcc.conf
+cross-x86_64-linux-uclibc/gdb cross-x86_64-linux-uclibc/gdb.conf

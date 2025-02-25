@@ -1,0 +1,10 @@
+*/* -gstreamer
+
+cat/pkg gstreamer
+=cat/other-pkg-0.0* gstreamer
+
+
+
+
+
+

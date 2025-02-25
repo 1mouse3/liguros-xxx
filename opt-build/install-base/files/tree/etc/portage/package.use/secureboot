@@ -1,0 +1,4 @@
+sys-kernel/gentoo-kernel -secureboot
+sys-boot/grub -secureboot
+sys-boot/refind -secureboot
+sys-apps/systemd-utils -secureboot

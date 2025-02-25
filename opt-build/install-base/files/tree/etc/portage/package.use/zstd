@@ -1,0 +1,3 @@
+net-misc/rsync zstd
+app-arch/libarchive zstd
+dev-libs/boost zstd

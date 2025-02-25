@@ -1,0 +1,4 @@
+*/* -wayland
+
+cat/pkg wayland
+=cat/other-pkg-0.0* wayland

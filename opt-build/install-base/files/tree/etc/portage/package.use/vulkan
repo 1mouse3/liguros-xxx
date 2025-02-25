@@ -1,0 +1,5 @@
+dev-qt/qtquick3d vulkan
+dev-qt/qtwayland vulkan
+dev-qt/qtdeclarative vulkan
+dev-qt/qttools vulkan
+dev-qt/qtbase vulkan

@@ -1,0 +1,4 @@
+*/* svg
+
+cat/pkg -svg
+=cat/other-pkg-0.0* -svg

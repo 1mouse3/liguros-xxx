@@ -1,0 +1,5 @@
+*/* d3d12
+
+cat/pkg -d3d12
+=cat/other-pkg-0.0* -d3d12
+media-libs/mesa video_card_targets_d3d12

@@ -1,0 +1,1 @@
+www-client/ungoogled-chromium -debug pulseaudio -vaapi cups -wayland ffmpeg-chromium -pax-kernel

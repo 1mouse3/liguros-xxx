@@ -13,9 +13,9 @@ SLOT=$(ver_cut 1-2)
 
 RESTRICT="binchecks strip mirror"
 
-IUSE="binary btrfs clang compact custom-cflags debug dtrace dmraid ec2 efi efistub +firmware grub +hardened iscsi initramfs initramfs13  libressl luks lvm makeconfig  mdadm mcelog +microcode multipath NetworkManager nfs nbd plymouth rEFInd +savedconfig selinux openssl +sign-modules secureboot symlink systemd qemu wireguard xen zfs tree"
+IUSE="binary btrfs clang custom-cflags debug dtrace dmraid ec2 efi efistub grub +hardened iscsi initramfs initramfs13  libressl luks lvm makeconfig  mdadm mcelog +microcode multipath nvidia rEFInd +savedconfig openssl +sign-modules secureboot symlink systemd qemu wireguard xen tree"
 
-REQUIRED_USE="hardened"
+REQUIRED_USE="hardened symlink"
 
 BDEPEND="
 	sys-devel/bc
@@ -47,7 +47,6 @@ BDEPEND="
 "
 
 DEPEND="
-	net-misc/dhcp[client]
 	binary? (
                 sys-kernel/dracut
                 sys-kernel/installkernel[dracut]
@@ -63,33 +62,9 @@ DEPEND="
 		dev-libs/libdtrace-ctf
 	)
 	efi? ( sys-boot/efibootmgr )
-	firmware? (
-		sys-kernel/linux-firmware
-	)
-        initramfs? ( sys-kernel/installkernel[dracut]
-                    sys-kernel/dracut
-		    sys-apps/kmod
-		    NetworkManager? ( net-misc/networkmanager )
-	)
-        initramfs13? ( sys-kernel/dracut
-                    sys-apps/kmod
-                    net-misc/networkmanager[NetworkManager]
-        )
-	luks? ( sys-fs/cryptsetup )
-	mcelog? ( app-admin/mcelog )
 	multipath? (
 		app-emulation/qemu[multipath]
 		sys-fs/multipath-tools
-	)
-	plymouth? (
-		 x11-libs/libdrm
-		 sys-boot/plymouth[udev]
-	)
-	iscsi? ( app-emulation/qemu[iscsi,nfs] )
-	dmraid? ( sys-fs/dmraid )
-        mdadm? ( sys-fs/mdadm )
-	nfs? ( net-fs/nfs-utils
-		app-emulation/qemu[nfs]
 	)
 	sign-modules? (
 		|| ( dev-libs/openssl
@@ -100,33 +75,16 @@ DEPEND="
 	openssl? ( dev-libs/openssl )
 	systemd? ( sys-apps/systemd )
 	!systemd? ( virtual/udev )
-	wireguard? ( virtual/wireguard )
-	xen? ( app-emulation/qemu[xen] )
-	zfs? ( sys-fs/zfs )
 	secureboot? ( sys-firmware/edk2-bin[secureboot] )
 "
 
 RDEPEND="
-	app-alternatives/cpio
-	>=app-shells/bash-4.0:0
 	sys-apps/coreutils[xattr(-)]
 	>=sys-apps/kmod-23[tools]
-	|| (
-		>=sys-apps/sysvinit-2.87-r3
-		sys-apps/openrc[sysv-utils(-),selinux?]
-		sys-apps/openrc-navi[sysv-utils(-),selinux?]
-		sys-apps/systemd[sysv-utils]
-		sys-apps/s6-linux-init[sysv-utils(-)]
-	)
 	>=sys-apps/util-linux-2.21
 	virtual/pkgconfig[native-symlinks(+)]
 	virtual/udev (
 		app-emulation/qemu[udev]
-	)
-	selinux? (
-		sec-policy/selinux-dracut
-		sys-libs/libselinux
-		sys-libs/libsepol
 	)
 "
 
@@ -181,6 +139,7 @@ PORTAGE_BUILDDIR="/var/tmp/portage/sys-kernel/debian-sources-6.1.124_p1-r1"
 USR_SRC_BUILD="${D}/lib/modules/${KERNELTAGS}/build"
 USR_SRC_BUILD_EXT="${D}/lib/modules/${KERNELTAGS}/.extra/build"
 CERTSDIR_NEW="${D}/etc/kernel/certs/${KERNELTAGS}"
+NVIDIA_MODULES="${S}drivers/video"
 LIB_MODULES="${D}/lib/modules/${KERNELTAGS}"
 GRAPHENE_LIST="${S}/${SLOT}/GRAPHENE_LIST"
 DEBIAN_LIST="${S}/${SLOT}/DEBIAN_LIST"
@@ -192,28 +151,11 @@ SAVEDCONFIG="/etc/portage/savedconfig/${CATEGORY}/${PN}"
 CERTSDIR="/etc/kernel/certs/${MODULE_EXT}"
 CLEAN_LIB="/lib/modules/${KERNELTAGS}"
 CLEAN_USR="/usr/src/linux-${KERNELTAG}"
+CLEAN_NVIDIA="/usr/src/linux/drivers/video"
 
 
 
 # TODO: manage HARDENED_PATCHES and GENTOO_PATCHES can be managed in a git repository and packed into tar balls per version.
-
-get_certs_dir() {
-    if use sign_modules ; then
-	# find a certificate dir in /etc/kernel/certs/ that contains signing cert for modules.
-	mkdir -p ${CERTSDIR_NEW}
-	cp -a ${CERTSDIR} ${CERTSDIR_NEW}
-	for subdir in $PF $P linux; do
-		if [ -d ${CERTSDIR_NEW} ]; then
-			if [ ! -e ${CERTSDIR_NEW}/signing_key.pem ]; then
-				eerror "${CERTSDIR_NEW} exists but missing signing key; exiting."
-				exit 1
-			fi
-			echo ${CERTSDIR_NEW}
-			return
-		fi
-	done
-   fi
-}
 
 pkg_pretend() {
 	# Ensure we have enough disk space to compile
@@ -272,7 +214,7 @@ pkg_setup() {
 }
 
 src_unpack() {
-   if use binary ; then
+   if use binary; then
         # unpack the kernel sources
 	unpack ${KERNEL} || die "failed to unpack kernel sources"
 
@@ -285,7 +227,7 @@ src_unpack() {
 }
 
 src_prepare() {
-   if use binary ; then
+   if use binary; then
         ENV_SETUP_MAKECONF
 	debug-print-function ${FUNCNAME} ${@}
 
@@ -297,10 +239,13 @@ src_prepare() {
         ## copy the debian patches into the kernel sources work directory (config-extract and graphene patches requires this).
         ## there is no need to punt the debian uefi certification and I put it where needs to be for future copy
 
-	cp -ra ${WORKDIR}/debian/ ${S}/debian
-	cp -ra ${WORKDIR}/${SLOT}/ ${S}/${SLOT}
-	cp -pR ${S}/debian/certs ${S}/certs || die "cd failed 3"
+	rsync -ar ${WORKDIR}/debian/ ${S}/debian
+	rsync -ar ${WORKDIR}/${SLOT}/ ${S}/${SLOT}
+	rsync -ar ${S}/debian/certs ${S}/certs || die "cd failed 3"
 
+	if use nvidia; then
+		rsync -ar ${CLEAN_NVIDIA}/ ${NVIDIA_MODULES}
+	fi
 
 	dir ${S}/${SLOT}
 
@@ -343,7 +288,7 @@ src_prepare() {
 	### GENERATE CONFIG ###
 
 	# Copy 'config-extract' tool to the work directory
-	cp ${FILESDIR}/config-extract-6.1 ./config-extract || die
+	rsync -ar ${FILESDIR}/config-extract-6.1/ ./config-extract || die
 
 	# ... and make it executable
 	chmod +x config-extract || die
@@ -493,8 +438,8 @@ src_prepare() {
 	# Apply any user patches
 	eapply_user
 
-	${@}=35-amd-microcode-systemd.install
-	${@}=35-intel-microcode-systemd.install
+	#${@}=35-amd-microcode-systemd.install
+	#${@}=35-intel-microcode-systemd.install
 }
 
 src_test() {
@@ -556,7 +501,7 @@ src_configure() {
 
 src_compile() {
         unset KBUILD_OUTPUT
-   if use binary ; then
+   if use binary; then
         ENV_SETUP_MAKECONF
 	emake ${MAKECONF[@]} bzImage
         if ${DO_I_HAVE_MODULES}; then
@@ -568,10 +513,10 @@ src_compile() {
 
 src_install() {
         unset KBUILD_OUTPUT
-   if use tree ; then
+   if use tree; then
 	rsync -ar ${S}/${SLOT}/tree/ ${D}
    fi
-   if use binary ; then
+   if use binary; then
         ENV_SETUP_MAKECONF
 	debug-print-function ${FUNCNAME} ${@}
 
@@ -608,17 +553,17 @@ src_install() {
         if (use arm || use arm64); then
                 TARGETS+=( dtbs_install )
         fi
-        emake ${MAKECONF[@]} install INSTALL_PATH=${D}/boot/EFI
+        emake ${MAKECONF[@]} install INSTALL_PATH=${D}/efi/EFI/Liguros
 
         if ${DO_I_HAVE_MODULES}; then
-                emake ${MAKECONF[@]} ${TARGETS[@]} INSTALL_MOD_PATH=${D} INSTALL_PATH=${D}/boot/EFI/Liguros;
+                emake ${MAKECONF[@]} ${TARGETS[@]} INSTALL_MOD_PATH=${D} INSTALL_PATH=${D}/efi/EFI/Liguros;
         fi
 
         ## This makes the /lib/modules/${KERNELTAGS}/build tree in ${D}
-        installkernel ${KERNELTAGS} ${S}/arch/x86/boot/bzImage ${S}/System.map ${D}/boot/EFI/Liguros
+        installkernel ${KERNELTAGS} ${S}/arch/x86/boot/bzImage ${S}/System.map ${D}/efi/EFI/Liguros
 
         ## will need to mess with "installkernel" since did not put this in the right place
-        cp ${S}/arch/x86/boot/bzImage ${D}/boot/EFI/
+        cp ${S}/arch/x86/boot/bzImage ${D}/efi/EFI/Liguros
 
         ## This take the above tree and generate modules.dep and map files, in the ${KERNELTAGS} folder.
         if [[ -d ${USR_SRC_BUILD} ]]; then
@@ -627,7 +572,13 @@ src_install() {
         if use sign-modules; then
             for x in $(find ${LIB_MODULES} -iname *.ko); do
                 # ${CERTSDIR_NEW} defined previously in this function.
-                ${S}/scripts/sign-file sha512 ${CERTSDIR}/signing_key.pem ${CERTSDIR}/signing_key.x509 $x || die
+                ${S}/scripts/sign-file sha512 ${CERTSDIR_NEW}/signing_key.pem ${CERTSDIR_NEW}/signing_key.x509 $x || die
+            done
+        fi
+        if use sign-modules & use nvidia; then
+            for x in $(find ${NVIDIA_MODULES} -iname *.ko); do
+                # ${CERTSDIR_NEW} defined previously in this function.
+                ${S}/scripts/sign-file sha512 ${CERTSDIR_NEW}/signing_key.pem ${CERTSDIR_NEW}/signing-key.x509 $x || die
             done
         fi
 
@@ -635,89 +586,19 @@ src_install() {
 	rm -r ${LIB_MODULES}/source
 	mkdir -p ${LIB_MODULES}/source
 	rsync -ar ${WORKDIR}/${KERNELTAGS}/source/  ${LIB_MODULES}/source
+	rsync -ar ${S}\ ${D}/usr/src/linux-${KERNELTAG}
+
+	if use symlink; then
+		ln -sf ${D}/usr/src/linux-${KERNELTAG} ${D}/usr/src/linux
+	fi
    fi
 
    if use tree; then
         rsync -ar ${FILESDIR}/tree/ ${D}
    fi
 
-   if use initramfs; then
-	## this is where dracut must be ran to pervent a sandbox violation
-        ## dracut will make /usr/src/linux from /lib/modules/${KERNELTAGS}/build, there is no need for hackery to do what installkernel and dracut do
-        ## this is all I could get dracut to run and in this order for some reason, it dose not respect the compreshion type I give it the way it was
-        einfo "Config is needed in "
-        einfo ">>> Dracut: building initramfs"
-        cd ${USR_SRC_BUILD}
-        dracut \
-        -v \
-        --compress=zstd \
-        --stdlog=5 \
-        --force \
-        --kver 6.1.124-debian1 \
-        --kmoddir ${LIB_MODULES} \
-        --fwdir /lib/firmware \
-        --early-microcode \
-        --libdirs "/lib64 /lib /usr/lib /usr/lib64" \
-        --add-fstab /etc/fstab \
-        --fstab \
-        --lvmconf \
-        ${D}/boot/EFI/Liguros/initramfs-${KERNELTAGS}.img ${KERNELTAGS} || die ">>>Dracut: Building initramfs failed"
-   fi
-
-   if use initramfs13; then
-	# NOTE: WIP and not well tested yet.
-	# The initramfs will be configurable via USE, i.e.
-	# USE=zfs will pass '--zfs' to Dracut
-	# USE=-systemd will pass '--omit dracut-systemd systemd systemd-networkd systemd-initrd' to exclude these (Dracut) modules from the initramfs.
-	## this all is too much to ask portage to do in one go, dracut keep taking a dump and would stop accepting commands
-        #
-	# NOTE 2: this will create a fairly.... minimal, and modular initramfs. It has been tested with things with ZFS and LUKS, and 'works'.
-	# Things like network support have not been tested (I am currently unsure how well this works with Gentoo Linux based systems),
-        # and may end up requiring networkmanager for decent support (this really needs further research).
-        ## " network-legacy " works but " network-manager " needs " systemd " to work, "NOTE" the trailing spaces that are needed for add and omit
-        ## " base rootfs-block udev-rules shutdown " had to be put in the omit list to get openrc to work on a gentoo backup
-        ## udev dose not have time to symlink all items to "/dev/disk/*" and will cause a crash to dracut shell on boot
-        ## use "PARTUUID" instead of "UUID" in "/etc/fstab", to get it to boot  and had to manualy edit "grub.cfg" to get gentoo to use this kernel
-        ## dont know what is up with dracut on my end, but kept taking a dump after so many variables and could not get these all to run with out failer
-
-	###########################
-	# installkernel can do this
-	${@}=50-dracut.install
-	${@}=51-dracut-rescue.install
-	#############################
-
-        $(usex btrfs "-a btrfs" "-o btrfs") \
-        $(usex dmraid "-a dmraid -a dm" "-o dmraid") \
-        $(usex hardened "-o resume" "-a resume") \
-        $(usex iscsi "-a iscsi" "-o iscsi") \
-        $(usex lvm "-a lvm -a dm" "-o lvm") \
-        $(usex lvm "--lvmconf" "--nolvmconf") \
-        $(usex luks "-a crypt" "-o crypt") \
-        $(usex mdadm "--mdadmconf" "--nomdadmconf") \
-        $(usex mdadm "-a mdraid" "-o mdraid") \
-        $(usex microcode "--early-microcode" "--no-early-microcode") \
-        $(usex multipath "-a multipath -a dm" "-o multipath") \
-        $(usex nbd "-a nbd" "-o nbd") \
-        $(usex nfs "-a nfs" "-o nfs") \
-        $(usex plymouth "-a plymouth" "-o plymouth") \
-        $(usex selinux "-a selinux" "-o selinux") \
-        $(usex systemd "-a systemd -a systemd-initrd -a systemd-networkd" "-o systemd -o systemd-initrd -o systemd-networkd") \
-        $(usex zfs "-a zfs" "-o zfs") \
-        $(usex NetworkManager) \
-        ## these as well gave issue but I reduced them in full to a config file, to solve the issues given
-        ## the above might work in conjunction with the config file, but not doing any more testing of dracut since got a working kernel
-        ## dracut needs " systemd " for " uefi-stub ", so dracut will be removed and replaced by mkinitramfs instead to get efi-stub
-        --add "base fs-lib i18n kernel-modules modsign NetworkManager qemu qemu-net rootfs-block shutdown terminfo uefi-lib udev-rules usrmount" \
-        --omit "memstrack biosdevname bootchart busybox caps convertfs dash debug dmsquash-live dmsquash-live-ntfs fcoe fcoe-uefi fstab-sys gensplash ifcfg img-lib livenet network-legacy mksh rpmversion securityfs ssh-client stratis syslog url-lib" \
 
 
-        # if USE=symlink...
-	# Dracut makes this dir and this command shound not go before
-        if use symlink; then
-                ln -sf ${D}/usr/src/linux-${KERNELTAG} ${D}/usr/src/linux
-        fi
-
-    fi
         mkdir -p ${D_FILESDIR}
 	cp -a ${PORTAGE_BUILDDIR}/temp/build.log ${D_FILESDIR}
 
@@ -740,33 +621,6 @@ pkg_postinst() {
 	    ewarn ""
 	    ewarn "/usr/src/linux symlink automatically set to linux-${KERNELTAG}"
 	    ewarn ""
-   fi
-
-   if use initramfs; then
-
-        einfo ""
-        einfo ">>> Dracut: Finished building initramfs"
-        ewarn ""
-        ewarn "WARNING... WARNING... WARNING..."
-        ewarn ""
-        ewarn "Dracut initramfs has been generated!"
-        ewarn ""
-        ewarn "Required kernel arguments:"
-        ewarn ""
-        ewarn "    root=/dev/ROOT"
-        ewarn ""
-        ewarn "    Where ROOT is the device node for your root partition as the"
-        ewarn "    one specified in /etc/fstab"
-        ewarn ""
-        ewarn "Additional kernel cmdline arguments that *may* be required to boot properly..."
-        ewarn ""
-        ewarn "If you use hibernation:"
-        ewarn ""
-        ewarn "    resume=/dev/SWAP"
-        ewarn ""
-        ewarn "    Where $SWAP is the swap device used by hibernate software of your choice."
-        ewarn""
-        ewarn "    Please consult 'man 7 dracut.kernel' for additional kernel arguments."
    fi
 
 	# warn about the issues with running a hardened kernel
@@ -800,19 +654,12 @@ pkg_postinst() {
 	ewarn ""
    fi
 
-	############################################
-	# installkernel can do this but not sure how
-   if use compact; then
-	${@}=90-compact.install
-   fi
    if use grub; then
-	${@}=91-grub-mkconfg.install
-	sys-kernel/installkernel[gentoo]
+        ewarn ""
    fi
    if use rEFInd; then
-	sys-kernel/installkernel[rEFInd]
+        ewarn ""
    fi
-	################################
 
    if use binary; then
 	if [[ -e /etc/boot.conf ]]; then

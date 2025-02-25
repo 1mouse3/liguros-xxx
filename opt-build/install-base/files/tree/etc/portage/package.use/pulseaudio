@@ -1,0 +1,17 @@
+media-video/pipewire sound-server
+media-sound/pulseaudio -daemon
+
+
+*/* pulseaudio
+
+cat/pkg pulseaudio
+=cat/other-pkg-0.0* pulseaudio
+
+media-video/vlc pulseaudio
+media-video/mpv pulseaudio
+media-video/pipewire pulseaudio
+media-video/ffmpeg pulseaudio
+lxqt-base/lxqt-panel pulseaudio
+media-sound/qsynth pulseaudio
+media-sound/fluidsynth pulseaudio
+media-sound/mpg123-base pulseaudio

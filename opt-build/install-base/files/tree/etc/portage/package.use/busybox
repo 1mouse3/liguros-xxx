@@ -1,0 +1,3 @@
+sys-apps/busybox static make-symlinks mdev -pam
+app-alternatives/awk -busybox
+app-alternatives/sh -busybox
