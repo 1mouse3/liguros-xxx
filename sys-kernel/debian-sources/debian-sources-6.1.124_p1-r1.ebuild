@@ -13,7 +13,7 @@ SLOT=$(ver_cut 1-2)
 
 RESTRICT="binchecks strip mirror"
 
-IUSE="binary btrfs clang custom-cflags debug dtrace dmraid ec2 efi efistub grub +hardened iscsi initramfs initramfs13  libressl luks lvm makeconfig  mdadm mcelog +microcode multipath nvidia rEFInd +savedconfig openssl +sign-modules secureboot symlink systemd qemu wireguard xen tree"
+IUSE="binary clang custom-cflags debug dtrace ec2 efi grub +hardened lvm libressl mcelog makeconfig +microcode multipath nvidia rEFInd +savedconfig openssl secureboot symlink systemd wireguard xen tree"
 
 REQUIRED_USE="hardened symlink"
 
@@ -21,29 +21,6 @@ BDEPEND="
 	sys-devel/bc
 	debug? ( dev-util/dwarves )
 	virtual/libelf
-	qemu? (  alpha? ( app-emulation/qemu[qemu_softmmu_targets_alpha] )
-		amd64? ( app-emulation/qemu[qemu_softmmu_targets_x86_64] )
-		arm? ( app-emulation/qemu[qemu_softmmu_targets_arm] )
-		arm64? ( app-emulation/qemu[qemu_softmmu_targets_aarch64] )
-		hppa? ( app-emulation/qemu[qemu_softmmu_targets_hppa] )
-		loong? ( app-emulation/qemu[qemu_softmmu_targets_loongarch64] )
-		mips? ( || (
-			app-emulation/qemu[qemu_softmmu_targets_mips]
-			app-emulation/qemu[qemu_softmmu_targets_mips64]
-			app-emulation/qemu[qemu_softmmu_targets_mips64el]
-		) )
-		ppc? ( app-emulation/qemu[qemu_softmmu_targets_ppc] )
-		ppc64? ( app-emulation/qemu[qemu_softmmu_targets_ppc64] )
-		riscv? ( || (
-			app-emulation/qemu[qemu_softmmu_targets_riscv32]
-			app-emulation/qemu[qemu_softmmu_targets_riscv64]
-		) )
-		sparc? ( || (
-			app-emulation/qemu[qemu_softmmu_targets_sparc]
-			app-emulation/qemu[qemu_softmmu_targets_sparc64]
-		) )
-		x86? ( app-emulation/qemu[qemu_softmmu_targets_i386] )
-	)
 "
 
 DEPEND="
@@ -55,37 +32,30 @@ DEPEND="
 		lvm? ( sys-kernel/genkernel
 		       sys-fs/lvm2[lvm,-thin] )
 		)
-	btrfs? ( sys-fs/btrfs-progs )
 	dtrace? (
-		app-emulation/qemu[systemtap]
 		dev-util/dtrace-utils
 		dev-libs/libdtrace-ctf
 	)
 	efi? ( sys-boot/efibootmgr )
 	multipath? (
-		app-emulation/qemu[multipath]
 		sys-fs/multipath-tools
 	)
-	sign-modules? (
+	openssl? ( dev-libs/openssl )
+	systemd? ( sys-apps/systemd )
+	!systemd? ( virtual/udev )
+	secureboot? ( sys-firmware/edk2-bin[secureboot]
 		|| ( dev-libs/openssl
 		     dev-libs/libressl
         )
 		sys-apps/kmod
 	)
-	openssl? ( dev-libs/openssl )
-	systemd? ( sys-apps/systemd )
-	!systemd? ( virtual/udev )
-	secureboot? ( sys-firmware/edk2-bin[secureboot] )
 "
 
 RDEPEND="
 	sys-apps/coreutils[xattr(-)]
-	>=sys-apps/kmod-23[tools]
+	>=sys-apps/kmod-23[tools,pkcs7]
 	>=sys-apps/util-linux-2.21
 	virtual/pkgconfig[native-symlinks(+)]
-	virtual/udev (
-		app-emulation/qemu[udev]
-	)
 "
 
 ## dracut wants this for a compact libc -- elibc_musl? ( sys-libs/fts-standalone )
@@ -132,14 +102,14 @@ S="${WORKDIR}/linux-${DEB_PV_BASE}"
 # @=/usr/lib/kernel/install.d/
 #############################
 
-KERNELTAGS="${DEB_PV_BASE}-debian1"
+# both gentoo and liguros want this as the name
+KERNELTAGS="${DEB_PV_BASE}-hardened1"
+
 KERNELTAG="${DEB_PV_BASE}${MODULE_EXT}"
 D_FILESDIR="${D}/var/db/repos/liguros-xxx/sys-kernel/debian-sources/files"
 PORTAGE_BUILDDIR="/var/tmp/portage/sys-kernel/debian-sources-6.1.124_p1-r1"
 USR_SRC_BUILD="${D}/lib/modules/${KERNELTAGS}/build"
-USR_SRC_BUILD_EXT="${D}/lib/modules/${KERNELTAGS}/.extra/build"
 CERTSDIR_NEW="${D}/etc/kernel/certs/${KERNELTAGS}"
-NVIDIA_MODULES="${S}drivers/video"
 LIB_MODULES="${D}/lib/modules/${KERNELTAGS}"
 GRAPHENE_LIST="${S}/${SLOT}/GRAPHENE_LIST"
 DEBIAN_LIST="${S}/${SLOT}/DEBIAN_LIST"
@@ -149,11 +119,11 @@ DTRACE_LIST="${S}/${SLOT}/DTRACE_LIST"
 # cairfull using these, becuase can cause a sandbox violation
 SAVEDCONFIG="/etc/portage/savedconfig/${CATEGORY}/${PN}"
 CERTSDIR="/etc/kernel/certs/${MODULE_EXT}"
+CLEAN_USR="/usr/src/linux-${KERNELTAGS}"
+
+# do not rsync to this location, it will brake the symlink and use /lib64 instead
+# portage makes the modules in /lib and why it is used but be carfull with it
 CLEAN_LIB="/lib/modules/${KERNELTAGS}"
-CLEAN_USR="/usr/src/linux-${KERNELTAG}"
-CLEAN_NVIDIA="/usr/src/linux/drivers/video"
-
-
 
 # TODO: manage HARDENED_PATCHES and GENTOO_PATCHES can be managed in a git repository and packed into tar balls per version.
 
@@ -208,7 +178,7 @@ pkg_setup() {
 
 	    # we need to pass it to override colliding Gentoo envvar
             ARCH="$(tc-arch-kernel)"
-                )
+            )
         }
    fi
 }
@@ -243,17 +213,11 @@ src_prepare() {
 	rsync -ar ${WORKDIR}/${SLOT}/ ${S}/${SLOT}
 	rsync -ar ${S}/debian/certs ${S}/certs || die "cd failed 3"
 
-	if use nvidia; then
-		rsync -ar ${CLEAN_NVIDIA}/ ${NVIDIA_MODULES}
-	fi
-
-	dir ${S}/${SLOT}
-
         cd ${S}
 
         ## the bloat running these patch in a circle made this ebuild a mess, so I reduced them down to a single line
         ## the patch file list that was dumped into this ebuild and could be done better by moving it to a manifest file
-        ## so all the patch files are now in a manifest list to clean up this ebuild 
+        ## so all the patch files are now in a manifest list to clean up this ebuild
 	if use hardened; then
 	einfo "Applying Graphene patches ..."
 	        for LIST_A in $( grep ".patch" ${GRAPHENE_LIST}); do eapply ${LIST_A}; done || die "echo failed"
@@ -283,7 +247,7 @@ src_prepare() {
 	sed -i -e "s:^\(EXTRAVERSION =\).*:\1 ${MODULE_EXT}:" Makefile || die "failed to append EXTRAVERSION to kernel Makefile"
 
 	# todo: look at this, haven't seen it used in many cases.
-	sed	-i -e 's:#export\tINSTALL_PATH:export\tINSTALL_PATH:' Makefile || die "failed to fix-up INSTALL_PATH in kernel Makefile"
+	sed -i -e 's:#export\tINSTALL_PATH:export\tINSTALL_PATH:' Makefile || die "failed to fix-up INSTALL_PATH in kernel Makefile"
 
 	### GENERATE CONFIG ###
 
@@ -384,17 +348,7 @@ src_prepare() {
 	        echo "CONFIG_X86_MCELOG_LEGACY=y" >> .config
 		fi
 
-	# sign kernel modules via
-		if use sign-modules; then
-#        certs_dir=$(${CERTSDIR})
-	        echo
-			if [ -z "${CERTSDIR_NEW}" ]; then
-				eerror "No certs dir found in /etc/kernel/certs; aborting."
-				die
-			else
-				einfo "Using certificate directory of ${CERTSDIR_NEW} for kernel module signing."
-			fi
-		echo
+		if use secureboot; then
         # turn on options for signing modules.
         # first, remove existing configs and comments:
 	        echo 'CONFIG_MODULE_SIG=""' >> .config
@@ -414,19 +368,17 @@ src_prepare() {
 	        echo 'CONFIG_SYSTEM_TRUSTED_KEYRING=y' >> .config
 	        echo 'CONFIG_SYSTEM_EXTRA_CERTIFICATE=y' >> .config
 	        echo 'CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE="4096"' >> .config
-
+		fi
         # See above comment re: LibreSSL
-        if use libressl; then
+	        if use libressl; then
 			echo "CONFIG_MODULE_SIG_SHA1=y" >> .config
 		        else
 			echo "CONFIG_MODULE_SIG_SHA512=y" >> .config
-		        fi
 	        ewarn "This kernel will ALLOW non-signed modules to be loaded with a WARNING."
 	        ewarn "To enable strict enforcement, YOU MUST add module.sig_enforce=1 as a kernel boot"
 	        ewarn "parameter (to params in /etc/boot.conf, and re-run boot-update.)"
 	        echo
 		fi
-
 	# enable wireguard support within kernel
 		if use wireguard; then
 		        echo 'CONFIG_WIREGUARD=m' >> .config
@@ -444,37 +396,16 @@ src_prepare() {
 
 src_test() {
 	addwrite /dev/kvm
-	# Translate ARCH so run-qemu can find the correct qemu-system-ARCH
-	local qemu_arch
-	if use amd64; then
-		qemu_arch=x86_64
-	elif use arm64; then
-		qemu_arch=aarch64
-	elif use loong; then
-		qemu_arch=loongarch64
-	elif use x86; then
-		qemu_arch=i386
-	else
-		qemu_arch=$(tc-arch)
-	fi
-	ARCH=${qemu_arch} emake -C test check
 }
 
 src_configure() {
         unset KBUILD_OUTPUT
    if use binary ; then
         ENV_SETUP_MAKECONF
-        if use initramfs; then
-        echo "####################################################################################"
-        echo "#    You need dracut.conf in /etc/dracut.conf.d/ for the initramfs flag to work    #"
-        echo "# Using the tree flag with USE '-binary -initramfs', will put one in place for you #"
-        echo "####################################################################################"
-	## need a kill option if this dose not exist
-	fi
         if use savedconfig; then
 	echo "############################################################################################################"
 	echo "# You need .config in /etc/portage/savedconfig/sys-kernel/debian-sources/ for the savedconfig flag to work #"
-	echo "#             Using the tree flag with USE '-binary -initramfs', will put one in place for you             #"
+	echo "#             Using the tree flag with USE '-binary', will put one in place for you			 #"
 	echo "############################################################################################################"
 	## need a kill option if this dose not exist
 	rm .config
@@ -482,8 +413,9 @@ src_configure() {
                 if [ ! -f .config ]; then
                 die "Could not locate user configfile, cannot continue"
                 fi
-	emake ${MAKECONF[@]} olddefconfig || die "kernel configure failed"
+        emake ${MAKECONF[@]} olddefconfig || die "kernel configure failed"
         fi
+
         if use makeconfig; then
 
 	emake ${MAKECONF[@]} oldconfig || die "kernel configure failed"
@@ -553,51 +485,56 @@ src_install() {
         if (use arm || use arm64); then
                 TARGETS+=( dtbs_install )
         fi
-        emake ${MAKECONF[@]} install INSTALL_PATH=${D}/efi/EFI/Liguros
+        emake ${MAKECONF[@]} install INSTALL_PATH=${D}/boot/EFI/Liguros
 
         if ${DO_I_HAVE_MODULES}; then
-                emake ${MAKECONF[@]} ${TARGETS[@]} INSTALL_MOD_PATH=${D} INSTALL_PATH=${D}/efi/EFI/Liguros;
+                emake ${MAKECONF[@]} ${TARGETS[@]} INSTALL_MOD_PATH=${D} INSTALL_PATH=${D}/boot/EFI/Liguros;
         fi
 
         ## This makes the /lib/modules/${KERNELTAGS}/build tree in ${D}
-        installkernel ${KERNELTAGS} ${S}/arch/x86/boot/bzImage ${S}/System.map ${D}/efi/EFI/Liguros
+        installkernel ${KERNELTAGS} ${S}/arch/x86/boot/bzImage ${S}/System.map ${D}/boot/EFI/Liguros
 
         ## will need to mess with "installkernel" since did not put this in the right place
-        cp ${S}/arch/x86/boot/bzImage ${D}/efi/EFI/Liguros
+        cp ${S}/arch/x86/boot/bzImage ${D}/boot/EFI/Liguros
+
+	if use secureboot; then
+		sbsing --key /root/secureboot/MOK.key --cert /root/secureboot/MOK.crt /boot/vmlinuz-${KERNELTAGS}
+	fi
 
         ## This take the above tree and generate modules.dep and map files, in the ${KERNELTAGS} folder.
+	if use nvidia; then
+		rsync -ar ${CLEAN_LIB}/video/ ${LIB_MODULES}/video
+	fi
         if [[ -d ${USR_SRC_BUILD} ]]; then
-                depmod -b ${D} -e -F System.map -a ${KERNELTAGS} || die
+                depmod -b ${D} -ae -F System.map ${KERNELTAGS} || die
         fi
-        if use sign-modules; then
-            for x in $(find ${LIB_MODULES} -iname *.ko); do
-                # ${CERTSDIR_NEW} defined previously in this function.
-                ${S}/scripts/sign-file sha512 ${CERTSDIR_NEW}/signing_key.pem ${CERTSDIR_NEW}/signing_key.x509 $x || die
-            done
-        fi
-        if use sign-modules & use nvidia; then
-            for x in $(find ${NVIDIA_MODULES} -iname *.ko); do
-                # ${CERTSDIR_NEW} defined previously in this function.
-                ${S}/scripts/sign-file sha512 ${CERTSDIR_NEW}/signing_key.pem ${CERTSDIR_NEW}/signing-key.x509 $x || die
-            done
-        fi
+
+	### This all is redundent to be put in this ebuild, modules like nvidia-drivers do this on there own
+	# if use sign-modules; then
+	# for x in $(find ${LIB_MODULES} -iname *.ko); do
+	# #CERTSDIR_NEW} defined previously in this function.
+	# ${S}/scripts/sign-file sha512 ${CERTSDIR_NEW}/signing_key.pem ${CERTSDIR_NEW}/signing_key.x509 $x || die
+	# done
+	# fi
 
         ## this all is setting stuff in place, "source" needs to be the source for initramfs
 	rm -r ${LIB_MODULES}/source
-	mkdir -p ${LIB_MODULES}/source
+	mkdir -p ${LIB_MODULES}/{build,source}
+	mkdir -p ${D}/usr/src
 	rsync -ar ${WORKDIR}/${KERNELTAGS}/source/  ${LIB_MODULES}/source
-	rsync -ar ${S}\ ${D}/usr/src/linux-${KERNELTAG}
+	rsync -ar ${S}/ ${D}/usr/src/linux-${KERNELTAGS}
+	cd ${D}
+
+	dosym .${CLEAN_USR}/ ${CLEAN_LIB}/build || die
 
 	if use symlink; then
-		ln -sf ${D}/usr/src/linux-${KERNELTAG} ${D}/usr/src/linux
+		dosym ./linux-${KERNELTAGS}  /usr/src/linux
 	fi
    fi
 
    if use tree; then
         rsync -ar ${FILESDIR}/tree/ ${D}
    fi
-
-
 
         mkdir -p ${D_FILESDIR}
 	cp -a ${PORTAGE_BUILDDIR}/temp/build.log ${D_FILESDIR}
@@ -666,4 +603,5 @@ pkg_postinst() {
 		ego boot update
 	fi
    fi
+#	cd /kill/me || die
 }
